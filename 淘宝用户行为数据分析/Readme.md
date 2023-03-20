@@ -410,12 +410,271 @@ def user_preserve():
 
 
 ###     5.2.4 用户价值RFM模型分析
+由于数据集缺少消费金额数据，所以我们只分析，R（最近一次购买），F（消费频次）将用户分为4个类别
+
+![img.png](data/img/img21.png)
+```
+def r_score(x):
+    if x < 3:
+        return 5
+    elif x>=3 and x<6:
+        return 4
+    elif x>=5 and x<8:
+        return 3
+    elif x>=8 and x<18:
+        return 2
+    else:
+        return 1
+
+
+def f_score(x):
+    if x == 1:
+        return 1
+    elif x == 2:
+        return 2
+    elif x == 3:
+        return 3
+    elif x == 4:
+        return 4
+    else:
+        return 5
+
+
+
+def user_value_analysis():
+    """
+    由于数据集缺少消费金额数据，所以我们只分析，R（最近一次购买），F（消费频次）将用户分为4个类别
+    :return:
+    """
+    date_max = data_analysis["date"].max()
+    data_RFM = pd.DataFrame()
+    data_RFM["R"] = (date_max - data_analysis[data_analysis["behavior_type"] == "buy"].groupby("user_id")["date"].max()).map(lambda x: x.days)
+    data_RFM["F"] = data_analysis[data_analysis["behavior_type"] == "buy"].groupby("user_id")["date"].count()
+    # 1. 用户最近购买的时间间隔分布图
+    # 查看用户最近购买的时间间隔的分布，为后续对R进行分箱打分提供指导依据。
+    recently_purchased = pd.DataFrame()
+    recently_purchased["num"] = data_RFM.groupby("R")["F"].count()
+    recently_purchased_index = [str(x) for x in recently_purchased.index]
+    plt.figure(figsize=(12, 8))
+    plt.bar(recently_purchased_index, recently_purchased["num"])
+    for a, b in zip(recently_purchased_index, recently_purchased["num"]):  # 添加数据标签
+        plt.text(a, b+0.05, '%.f' % b, ha='center', va='bottom', fontsize=10)
+    plt.title("最近购买时间分布间隔")
+    plt.xlabel("天数")
+    plt.ylabel("次数")
+    plt.show()
+    # 2. 查看R、F值的百分位分布情况
+    # 为后续R、F打分提供指导依据。
+    print(data_RFM.describe())
+    # 3. 计算R、F得分，并得出R、F值的高低
+    data_RFM["r_score"] = data_RFM["R"].map(r_score)
+    data_RFM["f_score"] = data_RFM["F"].map(f_score)
+    data_RFM["r_num"] = data_RFM["r_score"].apply(lambda x: 1 if x > data_RFM["r_score"].mean() else 0)
+    data_RFM["f_num"] = data_RFM["f_score"].apply(lambda x: 1 if x > data_RFM["f_score"].mean() else 0)
+    data_RFM["rfm_num"] = data_RFM["r_num"].map(str)+data_RFM["f_num"].map(str)
+    dic = {
+        "11": "重要价值用户",
+        "10": "重要发展用户",
+        "01": "重要保持客户",
+        "00": "重要挽留用户"
+    }
+    data_RFM["user_classification"] = data_RFM["rfm_num"].map(dic)
+    print(data_RFM.head())
+    print(data_RFM["user_classification"].value_counts())
+    print(data_RFM["user_classification"].value_counts(True))
+    #不同价值客户占比图
+    label = data_RFM["user_classification"].value_counts(True).index.tolist()
+    num = round(data_RFM["user_classification"].value_counts(True), 4).tolist()
+    pie = Pie().add("", [z for z in zip(label, num)])
+    pie.set_global_opts(title_opts=opts.TitleOpts(title="不同价值客户占比"))
+    pie.set_series_opts(label_opts=opts.LabelOpts(formatter="{b}:{d}%"))
+    pie.render("data/template/pie_user_classification.html")
+```
+![img.png](data/img/img23.png)
+
+![img.png](data/img/img24.png)
+
+![img.png](data/img/img22.png)
+
+ - 根据RFM用户价值分析对用户进行分类，其中重要价值用户和重要挽留用户各占约30%，重要发展用户和重要保持用户各占约20%。
+ - 分析与建议：应针对不同价值的用户采取不同的运营策略。总的来说，应当提升重要价值用户占比，减少重要挽留用户占比。
+   - 重要价值用户：主要提升该部分用户的满意度，服务升级，发放专属特别优惠，推送推广时也应当注意频率和方式，提升用户体验。
+   - 重要发展用户：最近消费时间间隔小，但消费频率不高，需要提高其消费频率，可在每次购买商品收货后提供限时代金券、限时优惠券等，提升下一步的消费欲望。
+   - 重要保持用户：交易频繁但最近无交易，可以向该类用户增加活动优惠、相关商品的推送频率等，唤回该部分用户。
+   - 重要挽留用户：最近消费时间间隔大，且消费频率低，这类用户即将流失，发放调查问卷调查用户体验找出问题原因，想办法挽留客户，若是价格原因则推送优惠券，若是推送不准确则改进推送机制。
 ##  5.3 商品维度
 ###     5.3.1 商品数量与商品类别
 ###     5.3.2 top10商品分析
+商品分析也可以从点击、收藏、加购和购买四个角度来分析，通过用户购买路径偏好分析，当前收藏和加购并不能有效促进销量的提升，故而这里主要针对点击量和购买量来对商品进行分析。通过点击量可以看出，商品是否对用户具有吸引力，通过购买量可以看出用户对商品的需求，通过统计商品的点击购买率，可以看出商品点击流量的转化情况。
 ####            5.3.2.1 点击量top10商品
 ####            5.3.2.2 购买量top10商品
-###     5.3.3 top10商品类别分析
-###     5.3.4 帕累托分析
+```
+def product_analysis():
+    # 5.3.1 商品数量与商品类别
+    print(f"商品数量:{data_analysis['item_id'].nunique()}")
+    print(f"商品类别数量:{data_analysis['item_category'].nunique()}")
+    # 5.3.2.1 点击量top10商品
+    click_top10 = data_analysis[data_analysis["behavior_type"] == "click"]["item_id"].value_counts().head(10)
+    click_top10_index = [str(x) for x in click_top10.index]
+    plt.bar(click_top10_index, click_top10.values)
+    for a, b in zip(click_top10_index, click_top10.values):  # 添加数据标签
+        plt.text(a, b+0.05, '%.f' % b, ha='center', va='bottom', fontsize=10)
+    plt.title("商品点击量top10")
+    plt.xlabel("商品")
+    plt.xticks(click_top10_index, rotation=45)
+    plt.ylabel("数量")
+    plt.show()
 
+    # 5.3.2.2 购买量top10商品
+    buy_top10 = data_analysis[data_analysis["behavior_type"] == "buy"]["item_id"].value_counts().head(10)
+    buy_top10_index = [str(x) for x in buy_top10.index]
+    plt.bar(buy_top10_index, buy_top10.values)
+    for a, b in zip(buy_top10_index, buy_top10.values):  # 添加数据标签
+        plt.text(a, b+0.05, '%.f' % b, ha='center', va='bottom', fontsize=10)
+    plt.title("商品购买量top10")
+    plt.xlabel("商品")
+    plt.xticks(buy_top10_index, rotation=45)
+    plt.ylabel("数量")
+    plt.show()
+
+    # 5.3.2.3 购买量top10的商品进行购买点击率分析
+    data_top10_clickbuyrate1 = pd.DataFrame()
+    data_top10_clickbuyrate1["click"] = data_analysis[data_analysis["behavior_type"] == "click"].groupby("item_id")["user_id"].count()
+    data_top10_clickbuyrate2 = pd.DataFrame()
+    data_top10_clickbuyrate2["collect"] = data_analysis[data_analysis["behavior_type"] == "collect"].groupby("item_id")["user_id"].count()
+    data_top10_clickbuyrate3 = pd.DataFrame()
+    data_top10_clickbuyrate3["cart"] = data_analysis[data_analysis["behavior_type"] == "cart"].groupby("item_id")["user_id"].count()
+    data_top10_clickbuyrate4 = pd.DataFrame()
+    data_top10_clickbuyrate4["buy"] = data_analysis[data_analysis["behavior_type"] == "buy"].groupby("item_id")["user_id"].count()
+    result = pd.merge(data_top10_clickbuyrate1, data_top10_clickbuyrate2, how="outer", left_index=True, right_index=True)
+    result = pd.merge(result, data_top10_clickbuyrate3, how="outer", left_index=True, right_index=True)
+    result = pd.merge(result, data_top10_clickbuyrate4, how="outer", left_index=True, right_index=True)
+    result["buy_click_rate"] = round(result["buy"]/result["click"]*100, 2)
+    result = result.fillna(0)
+    result["buy_click_rate"] = result["buy_click_rate"].map(lambda x: str(x)+"%")
+    # 购买量前10的商品点击购买转化率
+    print(result.sort_values(by="buy", ascending=False).head(10))
+    # 购买量前10的商品点击购买转化率
+    print(result.sort_values(by="click", ascending=False).head(10))
+```
+![img.png](data/img/img14.png)
+
+![img.png](data/img/img15.png)
+ - 对于购买量前列的商品，可以将购买点击率分为100%以上（包括无限大）、50%-100%、20%-50%、0-20%四个区间，针对不同区间使用不同的运营策略。
+   分析与建议：
+    - 转化率在100%以上的：这类商品转化率极高，可能是快消类、囤货类、同质类商品，不需要过多的点击查看商品详情就可以进行购买决策，可向有这类消费需求的用户推送此类商品。
+    - 转化率在50%-100%间的（top10商品中并没有出现）：这类商品购买点击率较高，说明用户搜索和点击商品目标明确，此类商品可能是特定特征群体需要的，此时可以收集用户信息分析用户画像，结合商品特征核实是否有更具体的用户特征，如果有就可以进行更精准的推送；另一方面，也可能是商品异质性较低，可选择性不强导致的，需要分析该类别商品的异质性，如果有此类问题可以尝试将类别中有区分度的商品给予更多的流量倾斜观察是否会带来更多的销量；如果以上假设均不成立，可以尝试对此类商品多做推广，毕竟原有转化率较高，较高的流量推广可能带来更多的购买量。
+    - 转化率在20%-50%间的：商品转化率一般，可以多做促销活动，将潜在用户转化为购买用户。
+    - 转化率在20%以下的：商品转化率较低，此时应更多的从商品本身来分析，购买量处于前列，但是购买点击率很低，可能是这部分商品做了流量推广但是推广针对的用户不准确，导致用户虽然点击但只有较少的用户选择了购买，也可能是商品价格远高于同类产品，导致最终成单率较低，又或者商品评价较差导致销量增加迟缓，需要分析更多的信息以作出进一步的判断，并针对分析的结果做出相应改善对策。
+
+![img.png](data/img/img16.png)
+
+![img.png](data/img/img17.png)
+ - 点击量前十的商品的购买点击率很低，说明用户点击量高但是转化率却很低，分析原因与上述top10购买量商品转化率20%以下的分析基本一致，可能是做了不精准或者不必要（没有那么大市场需求）的流量推广，或者平台的推送不准确，或者商品价格原因、质量原因等导致用户不愿意购买，需要结合更多信息以进行进一步的分析。
+###     5.3.3 top10商品类别分析
+```
+def product_category():
+    click_top10 = data_analysis[data_analysis["behavior_type"] == "click"]["item_category"].value_counts().head(10)
+    click_top10_index = [str(x) for x in click_top10.index]
+    plt.bar(click_top10_index, click_top10.values)
+    for a, b in zip(click_top10_index, click_top10.values):  # 添加数据标签
+        plt.text(a, b+0.05, '%.f' % b, ha='center', va='bottom', fontsize=10)
+    plt.title("商品类别点击量top10")
+    plt.xlabel("商品类别")
+    plt.xticks(click_top10_index, rotation=45)
+    plt.ylabel("数量")
+    plt.show()
+
+    # 5.3.3.2 购买量top10商品类别
+    buy_top10 = data_analysis[data_analysis["behavior_type"] == "buy"]["item_category"].value_counts().head(10)
+    buy_top10_index = [str(x) for x in buy_top10.index]
+    plt.bar(buy_top10_index, buy_top10.values)
+    for a, b in zip(buy_top10_index, buy_top10.values):  # 添加数据标签
+        plt.text(a, b+0.05, '%.f' % b, ha='center', va='bottom', fontsize=10)
+    plt.title("商品类别购买量top10")
+    plt.xlabel("商品类别")
+    plt.xticks(buy_top10_index, rotation=45)
+    plt.ylabel("数量")
+    plt.show()
+
+    # 5.3.2.3 购买量top10的商品类别进行购买点击率分析
+    data_top10_clickbuyrate1 = pd.DataFrame()
+    data_top10_clickbuyrate1["click"] = data_analysis[data_analysis["behavior_type"] == "click"].groupby("item_category")["user_id"].count()
+    data_top10_clickbuyrate2 = pd.DataFrame()
+    data_top10_clickbuyrate2["collect"] = data_analysis[data_analysis["behavior_type"] == "collect"].groupby("item_category")["user_id"].count()
+    data_top10_clickbuyrate3 = pd.DataFrame()
+    data_top10_clickbuyrate3["cart"] = data_analysis[data_analysis["behavior_type"] == "cart"].groupby("item_category")["user_id"].count()
+    data_top10_clickbuyrate4 = pd.DataFrame()
+    data_top10_clickbuyrate4["buy"] = data_analysis[data_analysis["behavior_type"] == "buy"].groupby("item_category")["user_id"].count()
+    result = pd.merge(data_top10_clickbuyrate1, data_top10_clickbuyrate2, how="outer", left_index=True, right_index=True)
+    result = pd.merge(result, data_top10_clickbuyrate3, how="outer", left_index=True, right_index=True)
+    result = pd.merge(result, data_top10_clickbuyrate4, how="outer", left_index=True, right_index=True)
+    result["buy_click_rate"] = round(result["buy"]/result["click"]*100, 2)
+    result = result.fillna(0)
+    result["buy_click_rate"] = result["buy_click_rate"].map(lambda x: str(x)+"%")
+    # 购买量前10的商品类别点击购买转化率
+    print(result.sort_values(by="buy", ascending=False).head(10))
+    # 购买量前10的商品类别点击购买转化率
+    print(result.sort_values(by="click", ascending=False).head(10))
+```
+
+![img.png](data/img/img18.png)
+
+ - 这一个月内top10商品类别的平均购买量在110左右。
+ - 分析与建议：
+    - 可对这些商品类别的类别特征进行分析，看是否有相似特征，若有，寻找有这些相似特征但销量一般的商品增加推广，可能带来销量的进一步提升；
+    - 对这些类别中的热销商品增加促销和推广，观察热销商品是否有进一步提升销量的空间；
+    - 将这些类别中的热销商品与同类别中的销量低的商品销售捆绑，通过降价或者满减促销的方式鼓励消费者进行组合购买，以此促进用户购买。
+
+![img.png](data/img/img19.png)
+ - 购买量前十的商品类别中，大部分商品类别的转化率仅在0-3%。
+ - 分析与建议：转化率较低的一个重要原因在于用户存在货比三家的心理，但最终往往选择一个商品进行购买，所以导致整个类别的转化率较低。提高类别的转化率关键在于推荐与搜索的精准性，具体表现在：
+    - 推荐的商品是用户感兴趣的商品，即推荐算法的精准 
+    - 推荐的商品应当是同类商品中较为优质的商品，有较高的商品评价，避免用户过多的比较、点击不同的商品。
+    - 优化用户购买同类商品的比较流程，增加同类商品信息比较与搜索的功能，减少不必要的重复点击查询。这样可以减少用户做出购买决策的时间，提升用户的购买体验。  
+###     5.3.4 帕累托分析
+对商品类别和商品进行帕累托分析，找出贡献前80%销量的商品类别和商品，往往这些商品类别和商品占总体的比重不到20%，可以将运营推广的重点放在这部分商品类别和商品中。
+####    5.3.4.1 帕累托分析：类别分析
+
+####    5.3.4.2 帕累托分析：商品分析
+```
+def pareto_analysis():
+    data_top10buynum_category = pd.DataFrame()
+    data_top10buynum_category["buy_num"] = data_analysis[data_analysis["behavior_type"] == "buy"].groupby("item_category")["item_category"].count().sort_values(ascending=False)
+    data_top10buynum_category["buy_num_cumsum"] = data_top10buynum_category["buy_num"].expanding().sum()
+    max_num = data_top10buynum_category["buy_num_cumsum"].max()
+    buynumtop80percent_categorynum = data_top10buynum_category[data_top10buynum_category["buy_num_cumsum"]/max_num < 0.8]["buy_num_cumsum"].count()
+    print("贡献前百分之八十销量的类别总数：" + str(buynumtop80percent_categorynum))
+    rate = buynumtop80percent_categorynum / data_analysis["item_category"].nunique()
+    print("贡献前百分之八十销量的类别占比：" + str(round(rate, 3)))
+
+    data_top10buynum_item = pd.DataFrame()
+    data_top10buynum_item["buy_num"] = data_analysis[data_analysis["behavior_type"] == "buy"].groupby("item_id")["item_id"].count().sort_values(ascending=False)
+    data_top10buynum_item["buy_num_cumsum"] = data_top10buynum_item["buy_num"].expanding().sum()
+    max_num = data_top10buynum_item["buy_num_cumsum"].max()
+    buynumtop80percent_itemnum = data_top10buynum_item[data_top10buynum_item["buy_num_cumsum"]/max_num < 0.8]["buy_num_cumsum"].count()
+    print("贡献前百分之八十销量的商品总数："+str(buynumtop80percent_itemnum))
+    rate = buynumtop80percent_itemnum/data_analysis["item_id"].nunique()
+    print("贡献前百分之八十销量的商品占比："+str(round(rate, 3)))
+```
+
+![img.png](data/img/img20.png)
+
+ - 贡献前80%销量的类别占比9.1%，贡献前80%销量的商品占比1.1%
+ - 分析与建议：根据二八法则，运营活动针对这1.1%的商品和9.1%的商品类别应当分配更多的资源，以期获得显著的销量提升效果。
 # 6. 总结与建议
+
+ - 平台基本情况
+   - 在统计的一个月里，网站总访问量100万次，总访客数9918人，日均访问量约3万次，人均访问量101次。复购率49%，近1/4用户会选择回购，验证了产品与平台的价值，跳出率0.97%，说明平台的用户流失极少，平台商品与广告对用户具有吸引力，人们愿意花费时间在平台上浏览、选购商品。（注：时期包含双12可能导致各指标较日常时期有所提升）
+ - 流量维度建议
+   - 用户的活跃时间有规律。在18点-22点，用户的访问量、各项行为指标明显上升，故而可以在此期间多进行推送、直播带货、促销活动等。
+   - 在流量转化方面，收藏、加购、购买的点击转化率均不超过3%，转化率较低，可考虑推送机制是否精准、商品质量是否有待提高、定价是否相对同行更高、售前服务质量是否有待提高等维度来定位问题。
+ - 用户维度建议
+   - 用户的短期留存率仍有较大的提升空间，可以通过有奖签到、限时优惠券等方式提高用户粘性；用户的长期留存率相较于短期留存率下降平缓，较为稳定，可以通过增加推送、发放优惠券等方式提升长期中用户对平台的忠诚度。
+   - 在用户的购买路径中，直接购买以及点击-购买是主要的购买方式，虽然收藏与加购的用户数量不低但转为购买量的占比很低，应当针对用户收藏、加购的商品加大力度发放优惠券、推送相关促销活动等促进用户对收藏加购商品的购买。
+   - 据RFM模型对用户进行了分类，针对不同价值的用户采取不同不同的运营策略，进行更为精细化的运营，提升重要价值用户占比，减少重要挽留用户占比。
+ - 商品维度建议
+   - 针对购买量前列的商品，依据转化率所在区间的不同，采取不同的运营策略。
+   - 点击量前列的商品，转化率普遍很低，通过推荐算法、流量推广、商品价格与质量等维度定位问题原因。
+   - 对类别的点击购买转化率较低的问题，可以尝试从精准推荐、优质推送、优化同类别商品的搜索流程等维度改善。
+   - 结合帕累托分析的结果，运营活动应对销量贡献大的商品或类别给予更多的资源倾斜。
