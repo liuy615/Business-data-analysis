@@ -22,6 +22,8 @@ plt.rcParams['axes.unicode_minus'] = False
 
 def main():
     print("这是程序的入口")
+
+
 # 4. 数据清洗
 #  4.1 数据读取
 data_analysis = pd.read_csv("data/taobao_user_behavior_cut.csv", index_col=0)
