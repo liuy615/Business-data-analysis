@@ -641,7 +641,7 @@ def run_time(fnc):
     time_start = datetime.datetime.now()
     fnc
     time_end = datetime.datetime.now()
-    print("此项目运行的时间为：", time_end - time_start)
+    print(f"此项目运行的时间为：{time_end - time_start}")
 
 
 if __name__ == '__main__':
