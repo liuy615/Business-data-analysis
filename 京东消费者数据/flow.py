@@ -136,20 +136,22 @@ class MonthFlow:
 
 class DramFlow(MonthFlow):
     def __init__(self, year, month):
-        super().__init__(year, month)
-        self.flow_pv_path = f"data/{self.month}月数据/flow_pv_data.xlsx"
+        self.year = year
+        self.month = month
+        self.flow_view_path = f"data/{self.month}月数据/flow_pv_data.xlsx"
         self.flow_buy_path = f"data/{self.month}月数据/flow_buy_data.xlsx"
         self.flow_type_path = f"data/{self.month}月数据/flow_type_data.xlsx"
-        self.save_pv_path = f"data/{self.month}月数据/draw_pv.html"
+        self.save_view_path = f"data/{self.month}月数据/draw_view.html"
+        self.save_buy_view_path = f"data/{self.month}月数据/draw_buy_view.html"
 
-    # 画图
+    # 绘制本月全体用户的pv数据
     def draw_pv_chart(self):
         """
         此方法用于将月流量pv数据转化为可视化的图形
         """
         # PV日流量折线图
-        pv_day_data = pd.read_excel(self.flow_pv_path, sheet_name="pv_day_data")  # 获取本月及上月的日pv数据
-        pv_day_x = [str(i + 1) for i in pv_day_data.index]  # 横坐标数据，以这个月的日期为准
+        pv_day_data = pd.read_excel(self.flow_view_path, sheet_name="pv_day_data")  # 获取本月及上月的日pv数据
+        pv_day_x = [str(i + 1)+"日" for i in pv_day_data.index]  # 横坐标数据，以这个月的日期为准
         last_pv_day_y = pv_day_data["last_month"].tolist()
         pv_day_y = pv_day_data["month"].tolist()
         pv_day_bar = (
@@ -158,7 +160,7 @@ class DramFlow(MonthFlow):
                 .add_yaxis("上月", last_pv_day_y, label_opts=opts.LabelOpts(is_show=False))
                 .add_yaxis("本月", pv_day_y, label_opts=opts.LabelOpts(is_show=False))
                 .set_global_opts(
-                title_opts=opts.TitleOpts("PV日流量折线图"),
+                title_opts=opts.TitleOpts("PV日流量"),
                 datazoom_opts=opts.DataZoomOpts(is_show=True),
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
             )
@@ -166,7 +168,7 @@ class DramFlow(MonthFlow):
                 yaxis=opts.AxisOpts(
                     name="增长率",
                     type_="value",
-                    interval=10,
+                    interval=50,
                     axislabel_opts=opts.LabelOpts(formatter="{value} %")  # 设置坐标轴格式
                 )
             )
@@ -180,7 +182,7 @@ class DramFlow(MonthFlow):
         pv_day_bar.overlap(pv_day_line)
 
         # PV周流量柱状图
-        pv_week_data = pd.read_excel(self.flow_pv_path, sheet_name="pv_week_data")  # 获取本月及上月的周pv数据
+        pv_week_data = pd.read_excel(self.flow_view_path, sheet_name="pv_week_data")  # 获取本月及上月的周pv数据
         pv_week_x = ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"]
         last_pv_week_y = pv_week_data["last_month"].tolist()
         pv_week_y = pv_week_data["month"].tolist()
@@ -190,7 +192,7 @@ class DramFlow(MonthFlow):
                 .add_yaxis("上月", last_pv_week_y, yaxis_index=0, category_gap="50%", label_opts=opts.LabelOpts(is_show=False))
                 .add_yaxis("本月", pv_week_y, yaxis_index=0, category_gap="50%", label_opts=opts.LabelOpts(is_show=False))
                 .set_global_opts(
-                title_opts=opts.TitleOpts("PV周流量柱状图"),
+                title_opts=opts.TitleOpts("PV周流量"),
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
             )
                 .extend_axis(   # 第二坐标轴
@@ -211,8 +213,8 @@ class DramFlow(MonthFlow):
         pv_week_bar.overlap(pv_week_line)
 
         # PV时流量柱状图
-        pv_hour_data = pd.read_excel(self.flow_pv_path, sheet_name="pv_hour_data")
-        pv_hour_x = [str(i) for i in range(0, 24)]
+        pv_hour_data = pd.read_excel(self.flow_view_path, sheet_name="pv_hour_data")
+        pv_hour_x = [str(i)+"时" for i in range(0, 24)]
         last_pv_hour_y = pv_hour_data["last_month"].tolist()
         pv_hour_y = pv_hour_data["month"].tolist()
         pv_hour_bar = (
@@ -221,7 +223,7 @@ class DramFlow(MonthFlow):
                 .add_yaxis("上月", last_pv_hour_y, category_gap="50%", gap="0%", label_opts=opts.LabelOpts(is_show=False))
                 .add_yaxis("本月", pv_hour_y, category_gap="50%", gap="0%", label_opts=opts.LabelOpts(is_show=False))
                 .set_global_opts(
-                title_opts=opts.TitleOpts("PV时流量柱状图"),
+                title_opts=opts.TitleOpts("PV时流量"),
                 datazoom_opts=opts.DataZoomOpts(is_show=True),
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
             )
@@ -244,13 +246,14 @@ class DramFlow(MonthFlow):
 
         return pv_day_bar, pv_week_bar, pv_hour_bar
 
+    # 绘制本月全体用户的uv数据
     def draw_uv_chart(self):
         """
         此方法用于将月流量uv数据转化为可视化的图形
         """
         # UV日流量折线图
-        uv_day_data = pd.read_excel(self.flow_pv_path, sheet_name="uv_day_data")  # 获取本月及上月的日pv数据
-        uv_day_x = [str(i + 1) for i in uv_day_data.index]  # 横坐标数据，以这个月的日期为准
+        uv_day_data = pd.read_excel(self.flow_view_path, sheet_name="uv_day_data")  # 获取本月及上月的日pv数据
+        uv_day_x = [str(i + 1)+"日" for i in uv_day_data.index]  # 横坐标数据，以这个月的日期为准
         last_uv_day_y = uv_day_data["last_month"].tolist()
         uv_day_y = uv_day_data["month"].tolist()
         uv_day_bar = (
@@ -259,7 +262,7 @@ class DramFlow(MonthFlow):
                 .add_yaxis("上月", last_uv_day_y, label_opts=opts.LabelOpts(is_show=False))
                 .add_yaxis("本月", uv_day_y, label_opts=opts.LabelOpts(is_show=False))
                 .set_global_opts(
-                title_opts=opts.TitleOpts("UV日流量折线图"),
+                title_opts=opts.TitleOpts("UV日流量"),
                 datazoom_opts=opts.DataZoomOpts(is_show=True),
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
             )
@@ -267,7 +270,7 @@ class DramFlow(MonthFlow):
                 yaxis=opts.AxisOpts(
                     name="增长率",
                     type_="value",
-                    interval=10,
+                    interval=50,
                     axislabel_opts=opts.LabelOpts(formatter="{value} %")  # 设置坐标轴格式
                 )
             )
@@ -281,7 +284,7 @@ class DramFlow(MonthFlow):
         uv_day_bar.overlap(uv_day_line)
 
         # UV周流量柱状图
-        uv_week_data = pd.read_excel(self.flow_pv_path, sheet_name="uv_week_data")  # 获取本月及上月的周pv数据
+        uv_week_data = pd.read_excel(self.flow_view_path, sheet_name="uv_week_data")  # 获取本月及上月的周pv数据
         uv_week_x = ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"]
         last_uv_week_y = uv_week_data["last_month"].tolist()
         uv_week_y = uv_week_data["month"].tolist()
@@ -291,7 +294,7 @@ class DramFlow(MonthFlow):
                 .add_yaxis("上月", last_uv_week_y, yaxis_index=0, category_gap="50%", label_opts=opts.LabelOpts(is_show=False))
                 .add_yaxis("本月", uv_week_y, yaxis_index=0, category_gap="50%", label_opts=opts.LabelOpts(is_show=False))
                 .set_global_opts(
-                title_opts=opts.TitleOpts("UV周流量柱状图"),
+                title_opts=opts.TitleOpts("UV周流量"),
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
             )
                 .extend_axis(   # 第二坐标轴
@@ -312,8 +315,8 @@ class DramFlow(MonthFlow):
         uv_week_bar.overlap(uv_week_line)
 
         # PV时流量柱状图
-        uv_hour_data = pd.read_excel(self.flow_pv_path, sheet_name="uv_hour_data")
-        uv_hour_x = [str(i) for i in range(0, 24)]
+        uv_hour_data = pd.read_excel(self.flow_view_path, sheet_name="uv_hour_data")
+        uv_hour_x = [str(i)+"时" for i in range(0, 24)]
         last_uv_hour_y = uv_hour_data["last_month"].tolist()
         uv_hour_y = uv_hour_data["month"].tolist()
         uv_hour_bar = (
@@ -322,7 +325,7 @@ class DramFlow(MonthFlow):
                 .add_yaxis("上月", last_uv_hour_y, category_gap="50%", gap="0%", label_opts=opts.LabelOpts(is_show=False))
                 .add_yaxis("本月", uv_hour_y, category_gap="50%", gap="0%", label_opts=opts.LabelOpts(is_show=False))
                 .set_global_opts(
-                title_opts=opts.TitleOpts("UV时流量柱状图"),
+                title_opts=opts.TitleOpts("UV时流量"),
                 datazoom_opts=opts.DataZoomOpts(is_show=True),
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
             )
@@ -345,30 +348,428 @@ class DramFlow(MonthFlow):
 
         return uv_day_bar, uv_week_bar, uv_hour_bar
 
+    # 人均访问量（全体pv/uv）折线图
+    def draw_avg_pv_chart(self):
+        """
+        1. 获取pv、uv数据
+        2. 用这个月的pv除以这个月的uv，得到人均pv
+        :return:
+        """
+        pv_day_data = pd.read_excel(self.flow_view_path, sheet_name="pv_day_data")  # 获取本月及上月的日pv数据
+        uv_day_data = pd.read_excel(self.flow_view_path, sheet_name="uv_day_data")  # 获取本月及上月的日uv数据
+        x_index = [str(i + 1)+"日" for i in pv_day_data.index]
+        y_data_day_1 = [round(i / j, 2) for i, j in zip(pv_day_data["month"], uv_day_data["month"])]
+        y_data_day_2 = [round(i / j, 2) for i, j in zip(pv_day_data["last_month"], uv_day_data["last_month"])]
+        day_avg_line = (
+            Line()
+                .add_xaxis(x_index)
+                .add_yaxis("本月", y_data_day_1, label_opts=opts.LabelOpts(is_show=False))
+                .add_yaxis("上月", y_data_day_2, label_opts=opts.LabelOpts(is_show=False))
+                .set_global_opts(
+                title_opts=opts.TitleOpts("日人均访问量"),
+                datazoom_opts=opts.DataZoomOpts(is_show=True),
+                tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
+                yaxis_opts=opts.AxisOpts(
+                    name="占比",
+                    type_="value",
+                    interval=1,
+                    axislabel_opts=opts.LabelOpts(formatter="{value} %")  # 设置坐标轴格式
+                )
+            )
+        )
+
+        pv_week_data = pd.read_excel(self.flow_view_path, sheet_name="pv_week_data")  # 获取本月及上月的日pv数据
+        uv_week_data = pd.read_excel(self.flow_view_path, sheet_name="uv_week_data")  # 获取本月及上月的日uv数据
+        x_index = ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"]
+        y_data_week_1 = [round(i / j, 2) for i, j in zip(pv_week_data["month"], uv_week_data["month"])]
+        y_data_week_2 = [round(i / j, 2) for i, j in zip(pv_week_data["last_month"], uv_week_data["last_month"])]
+        week_avg_line = (
+            Line()
+                .add_xaxis(x_index)
+                .add_yaxis("本月", y_data_week_1, label_opts=opts.LabelOpts(is_show=False))
+                .add_yaxis("上月", y_data_week_2, label_opts=opts.LabelOpts(is_show=False))
+                .set_global_opts(
+                title_opts=opts.TitleOpts("周人均访问量"),
+                tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
+                yaxis_opts=opts.AxisOpts(
+                    name="占比",
+                    type_="value",
+                    interval=1,
+                    axislabel_opts=opts.LabelOpts(formatter="{value} %")  # 设置坐标轴格式
+                )
+            )
+        )
+
+        pv_hour_data = pd.read_excel(self.flow_view_path, sheet_name="pv_hour_data")  # 获取本月及上月的日pv数据
+        uv_hour_data = pd.read_excel(self.flow_view_path, sheet_name="uv_hour_data")  # 获取本月及上月的日uv数据
+        x_index = [str(i)+"时" for i in pv_hour_data.index]
+        y_data_hour_1 = [round(i / j, 2) for i, j in zip(pv_hour_data["month"], uv_hour_data["month"])]
+        y_data_hour_2 = [round(i / j, 2) for i, j in zip(pv_hour_data["last_month"], uv_hour_data["last_month"])]
+        hour_avg_line = (
+            Line()
+                .add_xaxis(x_index)
+                .add_yaxis("本月", y_data_day_1, label_opts=opts.LabelOpts(is_show=False))
+                .add_yaxis("上月", y_data_day_2, label_opts=opts.LabelOpts(is_show=False))
+                .set_global_opts(
+                title_opts=opts.TitleOpts("时人均访问量"),
+                datazoom_opts=opts.DataZoomOpts(is_show=True),
+                tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
+                yaxis_opts=opts.AxisOpts(
+                    name="占比",
+                    type_="value",
+                    interval=1,
+                    axislabel_opts=opts.LabelOpts(formatter="{value} %")  # 设置坐标轴格式
+                )
+            )
+        )
+        return day_avg_line, week_avg_line, hour_avg_line
 
     # 合并
     def draw_pv_page(self):
         pv_day_bar, pv_week_bar, pv_hour_bar = self.draw_pv_chart()
         uv_day_bar, uv_week_bar, uv_hour_bar = self.draw_uv_chart()
+        day_avg_line, week_avg_line, hour_avg_line = self.draw_avg_pv_chart()
         pv_page = (
             Page()
                 .add(pv_day_bar)
                 .add(uv_day_bar)
+                .add(day_avg_line)
                 .add(pv_week_bar)
                 .add(uv_week_bar)
+                .add(week_avg_line)
                 .add(pv_hour_bar)
                 .add(uv_hour_bar)
+                .add(hour_avg_line)
         )
-        pv_page.render(self.save_pv_path)
-        with open(self.save_pv_path, "r+", encoding='utf-8') as html:
+        pv_page.render(self.save_view_path)
+        with open(self.save_view_path, "r+", encoding='utf-8') as html:
             html_bf = BeautifulSoup(html, 'lxml')
             divs = html_bf.select('.chart-container')
-            divs[0]["style"] = "width:50%;height:50%;position:absolute;top:0;left:0%;"
-            divs[1]["style"] = "width:50%;height:50%;position:absolute;top:0%;left:50%;"
-            divs[2]["style"] = "width:50%;height:50%;position:absolute;top:50%;left:0%;"
-            divs[3]["style"] = "width:50%;height:50%;position:absolute;top:50%;left:50%;"
-            divs[4]["style"] = "width:50%;height:50%;position:absolute;top:100%;left:0%;"
-            divs[5]["style"] = "width:50%;height:50%;position:absolute;top:100%;left:50%;"
+            divs[0]["style"] = "width:33%;height:33%;position:absolute;top:0;left:1%;"
+            divs[1]["style"] = "width:33%;height:33%;position:absolute;top:0%;left:34%;"
+            divs[2]["style"] = "width:33%;height:33%;position:absolute;top:0%;left:67%;"
+            divs[3]["style"] = "width:33%;height:33%;position:absolute;top:50%;left:1%;"
+            divs[4]["style"] = "width:33%;height:33%;position:absolute;top:50%;left:34%;"
+            divs[5]["style"] = "width:33%;height:33%;position:absolute;top:50%;left:67%;"
+            divs[6]["style"] = "width:33%;height:33%;position:absolute;top:100%;left:1%;"
+            divs[7]["style"] = "width:33%;height:33%;position:absolute;top:100%;left:34%;"
+            divs[8]["style"] = "width:33%;height:33%;position:absolute;top:100%;left:67%;"
+            html_new = str(html_bf)
+            html.seek(0, 0)
+            html.truncate()
+            html.write(html_new)
+            html.close()
+
+    # 绘制有购买行为的用户的pv数据
+    def draw_buy_pv_chart(self):
+        """
+        此方法用于将月流量pv数据转化为可视化的图形
+        """
+        # PV日流量折线图
+        pv_buy_day_data = pd.read_excel(self.flow_buy_path, sheet_name="pv_buy_day_data")  # 获取本月及上月的日pv数据
+        pv_day_x = [str(i + 1)+"日" for i in pv_buy_day_data.index]  # 横坐标数据，以这个月的日期为准
+        last_pv_day_y = pv_buy_day_data["last_month"].tolist()
+        pv_day_y = pv_buy_day_data["month"].tolist()
+        pv_buy_day_bar = (
+            Bar()
+                .add_xaxis(pv_day_x)
+                .add_yaxis("上月", last_pv_day_y, label_opts=opts.LabelOpts(is_show=False))
+                .add_yaxis("本月", pv_day_y, label_opts=opts.LabelOpts(is_show=False))
+                .set_global_opts(
+                title_opts=opts.TitleOpts("购买人群PV日流量"),
+                datazoom_opts=opts.DataZoomOpts(is_show=True),
+                tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
+            )
+                .extend_axis(   # 第二坐标轴
+                yaxis=opts.AxisOpts(
+                    name="增长率",
+                    type_="value",
+                    interval=50,
+                    axislabel_opts=opts.LabelOpts(formatter="{value} %")  # 设置坐标轴格式
+                )
+            )
+        )
+        pv_day_rate = pv_buy_day_data["growth_rate"].tolist()
+        pv_buy_day_line = (
+            Line()
+                .add_xaxis(pv_day_x)
+                .add_yaxis("增长率", pv_day_rate, yaxis_index=1, label_opts=opts.LabelOpts(is_show=False))
+        )
+        pv_buy_day_bar.overlap(pv_buy_day_line)
+
+        # PV周流量柱状图
+        pv_buy_week_data = pd.read_excel(self.flow_buy_path, sheet_name="pv_buy_week_data")  # 获取本月及上月的周pv数据
+        pv_week_x = ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"]
+        last_pv_week_y = pv_buy_week_data["last_month"].tolist()
+        pv_week_y = pv_buy_week_data["month"].tolist()
+        pv_buy_week_bar = (
+            Bar()
+                .add_xaxis(pv_week_x)
+                .add_yaxis("上月", last_pv_week_y, yaxis_index=0, category_gap="50%", label_opts=opts.LabelOpts(is_show=False))
+                .add_yaxis("本月", pv_week_y, yaxis_index=0, category_gap="50%", label_opts=opts.LabelOpts(is_show=False))
+                .set_global_opts(
+                title_opts=opts.TitleOpts("购买人群PV周流量"),
+                tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
+            )
+                .extend_axis(   # 第二坐标轴
+                yaxis=opts.AxisOpts(
+                    name="增长率",
+                    type_="value",
+                    interval=10,
+                    axislabel_opts=opts.LabelOpts(formatter="{value} %")  # 设置坐标轴格式
+                )
+            )
+        )
+        pv_week_rate = pv_buy_week_data["growth_rate"].tolist()
+        pv_buy_week_line = (
+            Line()
+                .add_xaxis(pv_week_x)
+                .add_yaxis("增长率", pv_week_rate, yaxis_index=1, label_opts=opts.LabelOpts(is_show=False))
+        )
+        pv_buy_week_bar.overlap(pv_buy_week_line)
+
+        # PV时流量柱状图
+        pv_buy_hour_data = pd.read_excel(self.flow_buy_path, sheet_name="pv_buy_hour_data")
+        pv_hour_x = [str(i)+"时" for i in range(0, 24)]
+        last_pv_hour_y = pv_buy_hour_data["last_month"].tolist()
+        pv_hour_y = pv_buy_hour_data["month"].tolist()
+        pv_buy_hour_bar = (
+            Bar()
+                .add_xaxis(pv_hour_x)
+                .add_yaxis("上月", last_pv_hour_y, category_gap="50%", gap="0%", label_opts=opts.LabelOpts(is_show=False))
+                .add_yaxis("本月", pv_hour_y, category_gap="50%", gap="0%", label_opts=opts.LabelOpts(is_show=False))
+                .set_global_opts(
+                title_opts=opts.TitleOpts("购买人群PV时流量"),
+                datazoom_opts=opts.DataZoomOpts(is_show=True),
+                tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
+            )
+                .extend_axis(   # 第二坐标轴
+                yaxis=opts.AxisOpts(
+                    name="增长率",
+                    type_="value",
+                    interval=10,
+                    axislabel_opts=opts.LabelOpts(formatter="{value} %")  # 设置坐标轴格式
+                )
+            )
+        )
+        pv_hour_rate = pv_buy_hour_data["growth_rate"].tolist()
+        pv_buy_hour_line = (
+            Line()
+                .add_xaxis(pv_hour_x)
+                .add_yaxis("增长率", pv_hour_rate, yaxis_index=1, label_opts=opts.LabelOpts(is_show=False))
+        )
+        pv_buy_hour_bar.overlap(pv_buy_hour_line)
+
+        return pv_buy_day_bar, pv_buy_week_bar, pv_buy_hour_bar
+
+    # 绘制有购买行为的用户的uv数据
+    def draw_buy_uv_chart(self):
+        """
+        此方法用于将月流量uv数据转化为可视化的图形
+        """
+        # PV日流量折线图
+        uv_buy_day_data = pd.read_excel(self.flow_buy_path, sheet_name="uv_buy_day_data")  # 获取本月及上月的日pv数据
+        uv_day_x = [str(i + 1)+"日" for i in uv_buy_day_data.index]  # 横坐标数据，以这个月的日期为准
+        last_uv_day_y = uv_buy_day_data["last_month"].tolist()
+        uv_day_y = uv_buy_day_data["month"].tolist()
+        uv_buy_day_bar = (
+            Bar()
+                .add_xaxis(uv_day_x)
+                .add_yaxis("上月", last_uv_day_y, label_opts=opts.LabelOpts(is_show=False))
+                .add_yaxis("本月", uv_day_y, label_opts=opts.LabelOpts(is_show=False))
+                .set_global_opts(
+                title_opts=opts.TitleOpts("购买人群UV日流量"),
+                datazoom_opts=opts.DataZoomOpts(is_show=True),
+                tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
+            )
+                .extend_axis(   # 第二坐标轴
+                yaxis=opts.AxisOpts(
+                    name="增长率",
+                    type_="value",
+                    interval=50,
+                    axislabel_opts=opts.LabelOpts(formatter="{value} %")  # 设置坐标轴格式
+                )
+            )
+        )
+        uv_day_rate = uv_buy_day_data["growth_rate"].tolist()
+        uv_buy_day_line = (
+            Line()
+                .add_xaxis(uv_day_x)
+                .add_yaxis("增长率", uv_day_rate, yaxis_index=1, label_opts=opts.LabelOpts(is_show=False))
+        )
+        uv_buy_day_bar.overlap(uv_buy_day_line)
+
+        # PV周流量柱状图
+        uv_buy_week_data = pd.read_excel(self.flow_buy_path, sheet_name="uv_buy_week_data")  # 获取本月及上月的周pv数据
+        uv_week_x = ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"]
+        last_uv_week_y = uv_buy_week_data["last_month"].tolist()
+        uv_week_y = uv_buy_week_data["month"].tolist()
+        uv_buy_week_bar = (
+            Bar()
+                .add_xaxis(uv_week_x)
+                .add_yaxis("上月", last_uv_week_y, yaxis_index=0, category_gap="50%", label_opts=opts.LabelOpts(is_show=False))
+                .add_yaxis("本月", uv_week_y, yaxis_index=0, category_gap="50%", label_opts=opts.LabelOpts(is_show=False))
+                .set_global_opts(
+                title_opts=opts.TitleOpts("购买人群UV周流量"),
+                tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
+            )
+                .extend_axis(   # 第二坐标轴
+                yaxis=opts.AxisOpts(
+                    name="增长率",
+                    type_="value",
+                    interval=10,
+                    axislabel_opts=opts.LabelOpts(formatter="{value} %")  # 设置坐标轴格式
+                )
+            )
+        )
+        uv_week_rate = uv_buy_week_data["growth_rate"].tolist()
+        uv_buy_week_line = (
+            Line()
+                .add_xaxis(uv_week_x)
+                .add_yaxis("增长率", uv_week_rate, yaxis_index=1, label_opts=opts.LabelOpts(is_show=False))
+        )
+        uv_buy_week_bar.overlap(uv_buy_week_line)
+
+        # PV时流量柱状图
+        uv_buy_hour_data = pd.read_excel(self.flow_buy_path, sheet_name="uv_buy_hour_data")
+        uv_hour_x = [str(i)+"时" for i in range(0, 24)]
+        last_uv_hour_y = uv_buy_hour_data["last_month"].tolist()
+        uv_hour_y = uv_buy_hour_data["month"].tolist()
+        uv_buy_hour_bar = (
+            Bar()
+                .add_xaxis(uv_hour_x)
+                .add_yaxis("上月", last_uv_hour_y, category_gap="50%", gap="0%", label_opts=opts.LabelOpts(is_show=False))
+                .add_yaxis("本月", uv_hour_y, category_gap="50%", gap="0%", label_opts=opts.LabelOpts(is_show=False))
+                .set_global_opts(
+                title_opts=opts.TitleOpts("购买人群UV时流量"),
+                datazoom_opts=opts.DataZoomOpts(is_show=True),
+                tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
+            )
+                .extend_axis(   # 第二坐标轴
+                yaxis=opts.AxisOpts(
+                    name="增长率",
+                    type_="value",
+                    interval=10,
+                    axislabel_opts=opts.LabelOpts(formatter="{value} %")  # 设置坐标轴格式
+                )
+            )
+        )
+        uv_hour_rate = uv_buy_hour_data["growth_rate"].tolist()
+        uv_buy_hour_line = (
+            Line()
+                .add_xaxis(uv_hour_x)
+                .add_yaxis("增长率", uv_hour_rate, yaxis_index=1, label_opts=opts.LabelOpts(is_show=False))
+        )
+        uv_buy_hour_bar.overlap(uv_buy_hour_line)
+
+        return uv_buy_day_bar, uv_buy_week_bar, uv_buy_hour_bar
+
+    # 绘制购买人群的人均访问量（全体pv/uv）折线图
+    def draw_avg_buy_chart(self):
+        """
+        1. 获取pv、uv数据
+        2. 用这个月的pv除以这个月的uv，得到人均pv
+        :return:
+        """
+        pv_day_data = pd.read_excel(self.flow_buy_path, sheet_name="pv_buy_day_data")  # 获取本月及上月的日pv数据
+        uv_day_data = pd.read_excel(self.flow_buy_path, sheet_name="uv_buy_day_data")  # 获取本月及上月的日uv数据
+        x_index = [str(i + 1)+"日" for i in pv_day_data.index]
+        y_data_day_1 = [round(i / j, 2) for i, j in zip(pv_day_data["month"], uv_day_data["month"])]
+        y_data_day_2 = [round(i / j, 2) for i, j in zip(pv_day_data["last_month"], uv_day_data["last_month"])]
+        day_avg_line = (
+            Line()
+                .add_xaxis(x_index)
+                .add_yaxis("本月", y_data_day_1, label_opts=opts.LabelOpts(is_show=False))
+                .add_yaxis("上月", y_data_day_2, label_opts=opts.LabelOpts(is_show=False))
+                .set_global_opts(
+                title_opts=opts.TitleOpts("日人均访问量"),
+                datazoom_opts=opts.DataZoomOpts(is_show=True),
+                tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
+                yaxis_opts=opts.AxisOpts(
+                    name="占比",
+                    type_="value",
+                    interval=1,
+                    axislabel_opts=opts.LabelOpts(formatter="{value} %")  # 设置坐标轴格式
+                )
+            )
+        )
+
+        pv_week_data = pd.read_excel(self.flow_buy_path, sheet_name="pv_buy_week_data")  # 获取本月及上月的日pv数据
+        uv_week_data = pd.read_excel(self.flow_buy_path, sheet_name="uv_buy_week_data")  # 获取本月及上月的日uv数据
+        x_index = ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"]
+        y_data_week_1 = [round(i / j, 2) for i, j in zip(pv_week_data["month"], uv_week_data["month"])]
+        y_data_week_2 = [round(i / j, 2) for i, j in zip(pv_week_data["last_month"], uv_week_data["last_month"])]
+        week_avg_line = (
+            Line()
+                .add_xaxis(x_index)
+                .add_yaxis("本月", y_data_week_1, label_opts=opts.LabelOpts(is_show=False))
+                .add_yaxis("上月", y_data_week_2, label_opts=opts.LabelOpts(is_show=False))
+                .set_global_opts(
+                title_opts=opts.TitleOpts("周人均访问量"),
+                tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
+                yaxis_opts=opts.AxisOpts(
+                    name="占比",
+                    type_="value",
+                    interval=1,
+                    axislabel_opts=opts.LabelOpts(formatter="{value} %")  # 设置坐标轴格式
+                )
+            )
+        )
+
+        pv_hour_data = pd.read_excel(self.flow_buy_path, sheet_name="pv_buy_hour_data")  # 获取本月及上月的日pv数据
+        uv_hour_data = pd.read_excel(self.flow_buy_path, sheet_name="uv_buy_hour_data")  # 获取本月及上月的日uv数据
+        x_index = [str(i)+"时" for i in pv_hour_data.index]
+        y_data_hour_1 = [round(i / j, 2) for i, j in zip(pv_hour_data["month"], uv_hour_data["month"])]
+        y_data_hour_2 = [round(i / j, 2) for i, j in zip(pv_hour_data["last_month"], uv_hour_data["last_month"])]
+        hour_avg_line = (
+            Line()
+                .add_xaxis(x_index)
+                .add_yaxis("本月", y_data_day_1, label_opts=opts.LabelOpts(is_show=False))
+                .add_yaxis("上月", y_data_day_2, label_opts=opts.LabelOpts(is_show=False))
+                .set_global_opts(
+                title_opts=opts.TitleOpts("时人均访问量"),
+                datazoom_opts=opts.DataZoomOpts(is_show=True),
+                tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
+                yaxis_opts=opts.AxisOpts(
+                    name="占比",
+                    type_="value",
+                    interval=1,
+                    axislabel_opts=opts.LabelOpts(formatter="{value} %")  # 设置坐标轴格式
+                )
+            )
+        )
+        return day_avg_line, week_avg_line, hour_avg_line
+
+    # 合并
+    def draw_buy_pv_page(self):
+        pv_buy_day_bar, pv_buy_week_bar, pv_buy_hour_bar = self.draw_buy_pv_chart()
+        uv_buy_day_bar, uv_buy_week_bar, uv_buy_hour_bar = self.draw_buy_uv_chart()
+        day_buy_avg_line, week_buy_avg_line, hour_buy_avg_line = self.draw_avg_buy_chart()
+        pv_page = (
+            Page()
+                .add(pv_buy_day_bar)
+                .add(uv_buy_day_bar)
+                .add(day_buy_avg_line)
+                .add(pv_buy_week_bar)
+                .add(uv_buy_week_bar)
+                .add(week_buy_avg_line)
+                .add(pv_buy_hour_bar)
+                .add(uv_buy_hour_bar)
+                .add(hour_buy_avg_line)
+        )
+        pv_page.render(self.save_buy_view_path)
+        with open(self.save_buy_view_path, "r+", encoding='utf-8') as html:
+            html_bf = BeautifulSoup(html, 'lxml')
+            divs = html_bf.select('.chart-container')
+            divs[0]["style"] = "width:33%;height:33%;position:absolute;top:0;left:1%;"
+            divs[1]["style"] = "width:33%;height:33%;position:absolute;top:0%;left:34%;"
+            divs[2]["style"] = "width:33%;height:33%;position:absolute;top:0%;left:67%;"
+            divs[3]["style"] = "width:33%;height:33%;position:absolute;top:50%;left:1%;"
+            divs[4]["style"] = "width:33%;height:33%;position:absolute;top:50%;left:34%;"
+            divs[5]["style"] = "width:33%;height:33%;position:absolute;top:50%;left:67%;"
+            divs[6]["style"] = "width:33%;height:33%;position:absolute;top:100%;left:1%;"
+            divs[7]["style"] = "width:33%;height:33%;position:absolute;top:100%;left:34%;"
+            divs[8]["style"] = "width:33%;height:33%;position:absolute;top:100%;left:67%;"
             html_new = str(html_bf)
             html.seek(0, 0)
             html.truncate()
@@ -402,6 +803,7 @@ def main():
     # 接下来是画图
     draw_flow = DramFlow(2018, 3)
     draw_flow.draw_pv_page()
+    draw_flow.draw_buy_pv_page()
 
 if __name__ == '__main__':
     main()
