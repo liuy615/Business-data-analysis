@@ -1,0 +1,9 @@
+<html>
+<body>
+    <h1>总览</h1>
+    <img src="cid:image1" alt="image1", width=500px, height=500px>
+    <h1>详细信息</h1>
+    <p>这是详细信息</p>
+    <img src="cid:image2" alt="image2", width=500px, height=500px>
+<body>
+<html>

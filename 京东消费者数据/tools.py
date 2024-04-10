@@ -4,7 +4,7 @@
 # @File    : tools.py
 import csv
 import datetime
-
+from email.mime.image import MIMEImage
 import numpy as np
 import pymysql
 import pandas as pd
@@ -119,6 +119,11 @@ def growth_rate(data, last_data):
     data_rate = pd.concat([data, last_data], axis=1, keys=["month", "last_month"])
     data_rate["growth_rate"] = round((data_rate["month"] - data_rate["last_month"])/data_rate["last_month"]*100, 2)
     return data_rate
+
+
+
+
+
 
 if __name__ == '__main__':
     print("程序结束！")

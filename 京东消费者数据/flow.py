@@ -8,7 +8,6 @@ from pyecharts.charts import Line, Bar, Page, Funnel, Pie
 from pyecharts import options as opts
 from bs4 import BeautifulSoup
 from tools import *
-from pyecharts.globals import ThemeType
 
 class MonthFlow:
     def __init__(self, year, month):
@@ -157,15 +156,15 @@ class DramFlow:
         pv_day_y = pv_day_data["month"].tolist()
         pv_day_bar = (
             Bar()
-                .add_xaxis(pv_day_x)
-                .add_yaxis("上月", last_pv_day_y, label_opts=opts.LabelOpts(is_show=False))
-                .add_yaxis("本月", pv_day_y, label_opts=opts.LabelOpts(is_show=False))
-                .set_global_opts(
+            .add_xaxis(pv_day_x)
+            .add_yaxis("上月", last_pv_day_y, label_opts=opts.LabelOpts(is_show=False))
+            .add_yaxis("本月", pv_day_y, label_opts=opts.LabelOpts(is_show=False))
+            .set_global_opts(
                 title_opts=opts.TitleOpts("PV日流量"),
                 datazoom_opts=opts.DataZoomOpts(is_show=True),
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
             )
-                .extend_axis(   # 第二坐标轴
+            .extend_axis(   # 第二坐标轴
                 yaxis=opts.AxisOpts(
                     name="增长率",
                     type_="value",
@@ -177,8 +176,8 @@ class DramFlow:
         pv_day_rate = pv_day_data["growth_rate"].tolist()
         pv_day_line = (
             Line()
-                .add_xaxis(pv_day_x)
-                .add_yaxis("增长率", pv_day_rate, yaxis_index=1, label_opts=opts.LabelOpts(is_show=False))
+            .add_xaxis(pv_day_x)
+            .add_yaxis("增长率", pv_day_rate, yaxis_index=1, label_opts=opts.LabelOpts(is_show=False))
         )
         pv_day_bar.overlap(pv_day_line)
 
@@ -189,14 +188,14 @@ class DramFlow:
         pv_week_y = pv_week_data["month"].tolist()
         pv_week_bar = (
             Bar()
-                .add_xaxis(pv_week_x)
-                .add_yaxis("上月", last_pv_week_y, yaxis_index=0, category_gap="50%", label_opts=opts.LabelOpts(is_show=False))
-                .add_yaxis("本月", pv_week_y, yaxis_index=0, category_gap="50%", label_opts=opts.LabelOpts(is_show=False))
-                .set_global_opts(
+            .add_xaxis(pv_week_x)
+            .add_yaxis("上月", last_pv_week_y, yaxis_index=0, category_gap="50%", label_opts=opts.LabelOpts(is_show=False))
+            .add_yaxis("本月", pv_week_y, yaxis_index=0, category_gap="50%", label_opts=opts.LabelOpts(is_show=False))
+            .set_global_opts(
                 title_opts=opts.TitleOpts("PV周流量"),
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
             )
-                .extend_axis(   # 第二坐标轴
+            .extend_axis(   # 第二坐标轴
                 yaxis=opts.AxisOpts(
                     name="增长率",
                     type_="value",
@@ -208,8 +207,8 @@ class DramFlow:
         pv_week_rate = pv_week_data["growth_rate"].tolist()
         pv_week_line = (
             Line()
-                .add_xaxis(pv_week_x)
-                .add_yaxis("增长率", pv_week_rate, yaxis_index=1, label_opts=opts.LabelOpts(is_show=False))
+            .add_xaxis(pv_week_x)
+            .add_yaxis("增长率", pv_week_rate, yaxis_index=1, label_opts=opts.LabelOpts(is_show=False))
         )
         pv_week_bar.overlap(pv_week_line)
 
@@ -220,15 +219,15 @@ class DramFlow:
         pv_hour_y = pv_hour_data["month"].tolist()
         pv_hour_bar = (
             Bar()
-                .add_xaxis(pv_hour_x)
-                .add_yaxis("上月", last_pv_hour_y, category_gap="50%", gap="0%", label_opts=opts.LabelOpts(is_show=False))
-                .add_yaxis("本月", pv_hour_y, category_gap="50%", gap="0%", label_opts=opts.LabelOpts(is_show=False))
-                .set_global_opts(
+            .add_xaxis(pv_hour_x)
+            .add_yaxis("上月", last_pv_hour_y, category_gap="50%", gap="0%", label_opts=opts.LabelOpts(is_show=False))
+            .add_yaxis("本月", pv_hour_y, category_gap="50%", gap="0%", label_opts=opts.LabelOpts(is_show=False))
+            .set_global_opts(
                 title_opts=opts.TitleOpts("PV时流量"),
                 datazoom_opts=opts.DataZoomOpts(is_show=True),
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
             )
-                .extend_axis(   # 第二坐标轴
+            .extend_axis(   # 第二坐标轴
                 yaxis=opts.AxisOpts(
                     name="增长率",
                     type_="value",
@@ -240,8 +239,8 @@ class DramFlow:
         pv_hour_rate = pv_hour_data["growth_rate"].tolist()
         pv_hour_line = (
             Line()
-                .add_xaxis(pv_hour_x)
-                .add_yaxis("增长率", pv_hour_rate, yaxis_index=1, label_opts=opts.LabelOpts(is_show=False))
+            .add_xaxis(pv_hour_x)
+            .add_yaxis("增长率", pv_hour_rate, yaxis_index=1, label_opts=opts.LabelOpts(is_show=False))
         )
         pv_hour_bar.overlap(pv_hour_line)
 
@@ -259,15 +258,15 @@ class DramFlow:
         uv_day_y = uv_day_data["month"].tolist()
         uv_day_bar = (
             Bar()
-                .add_xaxis(uv_day_x)
-                .add_yaxis("上月", last_uv_day_y, label_opts=opts.LabelOpts(is_show=False))
-                .add_yaxis("本月", uv_day_y, label_opts=opts.LabelOpts(is_show=False))
-                .set_global_opts(
+            .add_xaxis(uv_day_x)
+            .add_yaxis("上月", last_uv_day_y, label_opts=opts.LabelOpts(is_show=False))
+            .add_yaxis("本月", uv_day_y, label_opts=opts.LabelOpts(is_show=False))
+            .set_global_opts(
                 title_opts=opts.TitleOpts("UV日流量"),
                 datazoom_opts=opts.DataZoomOpts(is_show=True),
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
             )
-                .extend_axis(   # 第二坐标轴
+            .extend_axis(   # 第二坐标轴
                 yaxis=opts.AxisOpts(
                     name="增长率",
                     type_="value",
@@ -279,8 +278,8 @@ class DramFlow:
         uv_day_rate = uv_day_data["growth_rate"].tolist()
         uv_day_line = (
             Line()
-                .add_xaxis(uv_day_x)
-                .add_yaxis("增长率", uv_day_rate, yaxis_index=1, label_opts=opts.LabelOpts(is_show=False))
+            .add_xaxis(uv_day_x)
+            .add_yaxis("增长率", uv_day_rate, yaxis_index=1, label_opts=opts.LabelOpts(is_show=False))
         )
         uv_day_bar.overlap(uv_day_line)
 
@@ -291,14 +290,14 @@ class DramFlow:
         uv_week_y = uv_week_data["month"].tolist()
         uv_week_bar = (
             Bar()
-                .add_xaxis(uv_week_x)
-                .add_yaxis("上月", last_uv_week_y, yaxis_index=0, category_gap="50%", label_opts=opts.LabelOpts(is_show=False))
-                .add_yaxis("本月", uv_week_y, yaxis_index=0, category_gap="50%", label_opts=opts.LabelOpts(is_show=False))
-                .set_global_opts(
+            .add_xaxis(uv_week_x)
+            .add_yaxis("上月", last_uv_week_y, yaxis_index=0, category_gap="50%", label_opts=opts.LabelOpts(is_show=False))
+            .add_yaxis("本月", uv_week_y, yaxis_index=0, category_gap="50%", label_opts=opts.LabelOpts(is_show=False))
+            .set_global_opts(
                 title_opts=opts.TitleOpts("UV周流量"),
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
             )
-                .extend_axis(   # 第二坐标轴
+            .extend_axis(   # 第二坐标轴
                 yaxis=opts.AxisOpts(
                     name="增长率",
                     type_="value",
@@ -310,8 +309,8 @@ class DramFlow:
         uv_week_rate = uv_week_data["growth_rate"].tolist()
         uv_week_line = (
             Line()
-                .add_xaxis(uv_week_x)
-                .add_yaxis("增长率", uv_week_rate, yaxis_index=1, label_opts=opts.LabelOpts(is_show=False))
+            .add_xaxis(uv_week_x)
+            .add_yaxis("增长率", uv_week_rate, yaxis_index=1, label_opts=opts.LabelOpts(is_show=False))
         )
         uv_week_bar.overlap(uv_week_line)
 
@@ -322,15 +321,15 @@ class DramFlow:
         uv_hour_y = uv_hour_data["month"].tolist()
         uv_hour_bar = (
             Bar()
-                .add_xaxis(uv_hour_x)
-                .add_yaxis("上月", last_uv_hour_y, category_gap="50%", gap="0%", label_opts=opts.LabelOpts(is_show=False))
-                .add_yaxis("本月", uv_hour_y, category_gap="50%", gap="0%", label_opts=opts.LabelOpts(is_show=False))
-                .set_global_opts(
+            .add_xaxis(uv_hour_x)
+            .add_yaxis("上月", last_uv_hour_y, category_gap="50%", gap="0%", label_opts=opts.LabelOpts(is_show=False))
+            .add_yaxis("本月", uv_hour_y, category_gap="50%", gap="0%", label_opts=opts.LabelOpts(is_show=False))
+            .set_global_opts(
                 title_opts=opts.TitleOpts("UV时流量"),
                 datazoom_opts=opts.DataZoomOpts(is_show=True),
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
             )
-                .extend_axis(   # 第二坐标轴
+            .extend_axis(   # 第二坐标轴
                 yaxis=opts.AxisOpts(
                     name="增长率",
                     type_="value",
@@ -342,8 +341,8 @@ class DramFlow:
         uv_hour_rate = uv_hour_data["growth_rate"].tolist()
         uv_hour_line = (
             Line()
-                .add_xaxis(uv_hour_x)
-                .add_yaxis("增长率", uv_hour_rate, yaxis_index=1, label_opts=opts.LabelOpts(is_show=False))
+            .add_xaxis(uv_hour_x)
+            .add_yaxis("增长率", uv_hour_rate, yaxis_index=1, label_opts=opts.LabelOpts(is_show=False))
         )
         uv_hour_bar.overlap(uv_hour_line)
 
@@ -363,10 +362,10 @@ class DramFlow:
         y_data_day_2 = [round(i / j, 2) for i, j in zip(pv_day_data["last_month"], uv_day_data["last_month"])]
         day_avg_line = (
             Line()
-                .add_xaxis(x_index)
-                .add_yaxis("本月", y_data_day_1, label_opts=opts.LabelOpts(is_show=False))
-                .add_yaxis("上月", y_data_day_2, label_opts=opts.LabelOpts(is_show=False))
-                .set_global_opts(
+            .add_xaxis(x_index)
+            .add_yaxis("本月", y_data_day_1, label_opts=opts.LabelOpts(is_show=False))
+            .add_yaxis("上月", y_data_day_2, label_opts=opts.LabelOpts(is_show=False))
+            .set_global_opts(
                 title_opts=opts.TitleOpts("日人均访问量"),
                 datazoom_opts=opts.DataZoomOpts(is_show=True),
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
@@ -386,10 +385,10 @@ class DramFlow:
         y_data_week_2 = [round(i / j, 2) for i, j in zip(pv_week_data["last_month"], uv_week_data["last_month"])]
         week_avg_line = (
             Line()
-                .add_xaxis(x_index)
-                .add_yaxis("本月", y_data_week_1, label_opts=opts.LabelOpts(is_show=False))
-                .add_yaxis("上月", y_data_week_2, label_opts=opts.LabelOpts(is_show=False))
-                .set_global_opts(
+            .add_xaxis(x_index)
+            .add_yaxis("本月", y_data_week_1, label_opts=opts.LabelOpts(is_show=False))
+            .add_yaxis("上月", y_data_week_2, label_opts=opts.LabelOpts(is_show=False))
+            .set_global_opts(
                 title_opts=opts.TitleOpts("周人均访问量"),
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
                 yaxis_opts=opts.AxisOpts(
@@ -408,10 +407,10 @@ class DramFlow:
         y_data_hour_2 = [round(i / j, 2) for i, j in zip(pv_hour_data["last_month"], uv_hour_data["last_month"])]
         hour_avg_line = (
             Line()
-                .add_xaxis(x_index)
-                .add_yaxis("本月", y_data_day_1, label_opts=opts.LabelOpts(is_show=False))
-                .add_yaxis("上月", y_data_day_2, label_opts=opts.LabelOpts(is_show=False))
-                .set_global_opts(
+            .add_xaxis(x_index)
+            .add_yaxis("本月", y_data_hour_1, label_opts=opts.LabelOpts(is_show=False))
+            .add_yaxis("上月", y_data_hour_2, label_opts=opts.LabelOpts(is_show=False))
+            .set_global_opts(
                 title_opts=opts.TitleOpts("时人均访问量"),
                 datazoom_opts=opts.DataZoomOpts(is_show=True),
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
@@ -432,15 +431,15 @@ class DramFlow:
         day_avg_line, week_avg_line, hour_avg_line = self.draw_avg_pv_chart()
         pv_page = (
             Page()
-                .add(pv_day_bar)
-                .add(uv_day_bar)
-                .add(day_avg_line)
-                .add(pv_week_bar)
-                .add(uv_week_bar)
-                .add(week_avg_line)
-                .add(pv_hour_bar)
-                .add(uv_hour_bar)
-                .add(hour_avg_line)
+            .add(pv_day_bar)
+            .add(uv_day_bar)
+            .add(day_avg_line)
+            .add(pv_week_bar)
+            .add(uv_week_bar)
+            .add(week_avg_line)
+            .add(pv_hour_bar)
+            .add(uv_hour_bar)
+            .add(hour_avg_line)
         )
         pv_page.render(self.save_view_path)
         with open(self.save_view_path, "r+", encoding='utf-8') as html:
@@ -473,15 +472,15 @@ class DramFlow:
         pv_day_y = pv_buy_day_data["month"].tolist()
         pv_buy_day_bar = (
             Bar()
-                .add_xaxis(pv_day_x)
-                .add_yaxis("上月", last_pv_day_y, label_opts=opts.LabelOpts(is_show=False))
-                .add_yaxis("本月", pv_day_y, label_opts=opts.LabelOpts(is_show=False))
-                .set_global_opts(
+            .add_xaxis(pv_day_x)
+            .add_yaxis("上月", last_pv_day_y, label_opts=opts.LabelOpts(is_show=False))
+            .add_yaxis("本月", pv_day_y, label_opts=opts.LabelOpts(is_show=False))
+            .set_global_opts(
                 title_opts=opts.TitleOpts("购买人群PV日流量"),
                 datazoom_opts=opts.DataZoomOpts(is_show=True),
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
             )
-                .extend_axis(   # 第二坐标轴
+            .extend_axis(   # 第二坐标轴
                 yaxis=opts.AxisOpts(
                     name="增长率",
                     type_="value",
@@ -493,8 +492,8 @@ class DramFlow:
         pv_day_rate = pv_buy_day_data["growth_rate"].tolist()
         pv_buy_day_line = (
             Line()
-                .add_xaxis(pv_day_x)
-                .add_yaxis("增长率", pv_day_rate, yaxis_index=1, label_opts=opts.LabelOpts(is_show=False))
+            .add_xaxis(pv_day_x)
+            .add_yaxis("增长率", pv_day_rate, yaxis_index=1, label_opts=opts.LabelOpts(is_show=False))
         )
         pv_buy_day_bar.overlap(pv_buy_day_line)
 
@@ -505,10 +504,10 @@ class DramFlow:
         pv_week_y = pv_buy_week_data["month"].tolist()
         pv_buy_week_bar = (
             Bar()
-                .add_xaxis(pv_week_x)
-                .add_yaxis("上月", last_pv_week_y, yaxis_index=0, category_gap="50%", label_opts=opts.LabelOpts(is_show=False))
-                .add_yaxis("本月", pv_week_y, yaxis_index=0, category_gap="50%", label_opts=opts.LabelOpts(is_show=False))
-                .set_global_opts(
+            .add_xaxis(pv_week_x)
+            .add_yaxis("上月", last_pv_week_y, yaxis_index=0, category_gap="50%", label_opts=opts.LabelOpts(is_show=False))
+            .add_yaxis("本月", pv_week_y, yaxis_index=0, category_gap="50%", label_opts=opts.LabelOpts(is_show=False))
+            .set_global_opts(
                 title_opts=opts.TitleOpts("购买人群PV周流量"),
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
             )
@@ -524,8 +523,8 @@ class DramFlow:
         pv_week_rate = pv_buy_week_data["growth_rate"].tolist()
         pv_buy_week_line = (
             Line()
-                .add_xaxis(pv_week_x)
-                .add_yaxis("增长率", pv_week_rate, yaxis_index=1, label_opts=opts.LabelOpts(is_show=False))
+            .add_xaxis(pv_week_x)
+            .add_yaxis("增长率", pv_week_rate, yaxis_index=1, label_opts=opts.LabelOpts(is_show=False))
         )
         pv_buy_week_bar.overlap(pv_buy_week_line)
 
@@ -536,15 +535,15 @@ class DramFlow:
         pv_hour_y = pv_buy_hour_data["month"].tolist()
         pv_buy_hour_bar = (
             Bar()
-                .add_xaxis(pv_hour_x)
-                .add_yaxis("上月", last_pv_hour_y, category_gap="50%", gap="0%", label_opts=opts.LabelOpts(is_show=False))
-                .add_yaxis("本月", pv_hour_y, category_gap="50%", gap="0%", label_opts=opts.LabelOpts(is_show=False))
-                .set_global_opts(
+            .add_xaxis(pv_hour_x)
+            .add_yaxis("上月", last_pv_hour_y, category_gap="50%", gap="0%", label_opts=opts.LabelOpts(is_show=False))
+            .add_yaxis("本月", pv_hour_y, category_gap="50%", gap="0%", label_opts=opts.LabelOpts(is_show=False))
+            .set_global_opts(
                 title_opts=opts.TitleOpts("购买人群PV时流量"),
                 datazoom_opts=opts.DataZoomOpts(is_show=True),
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
             )
-                .extend_axis(   # 第二坐标轴
+            .extend_axis(   # 第二坐标轴
                 yaxis=opts.AxisOpts(
                     name="增长率",
                     type_="value",
@@ -556,8 +555,8 @@ class DramFlow:
         pv_hour_rate = pv_buy_hour_data["growth_rate"].tolist()
         pv_buy_hour_line = (
             Line()
-                .add_xaxis(pv_hour_x)
-                .add_yaxis("增长率", pv_hour_rate, yaxis_index=1, label_opts=opts.LabelOpts(is_show=False))
+            .add_xaxis(pv_hour_x)
+            .add_yaxis("增长率", pv_hour_rate, yaxis_index=1, label_opts=opts.LabelOpts(is_show=False))
         )
         pv_buy_hour_bar.overlap(pv_buy_hour_line)
 
@@ -575,15 +574,15 @@ class DramFlow:
         uv_day_y = uv_buy_day_data["month"].tolist()
         uv_buy_day_bar = (
             Bar()
-                .add_xaxis(uv_day_x)
-                .add_yaxis("上月", last_uv_day_y, label_opts=opts.LabelOpts(is_show=False))
-                .add_yaxis("本月", uv_day_y, label_opts=opts.LabelOpts(is_show=False))
-                .set_global_opts(
+            .add_xaxis(uv_day_x)
+            .add_yaxis("上月", last_uv_day_y, label_opts=opts.LabelOpts(is_show=False))
+            .add_yaxis("本月", uv_day_y, label_opts=opts.LabelOpts(is_show=False))
+            .set_global_opts(
                 title_opts=opts.TitleOpts("购买人群UV日流量"),
                 datazoom_opts=opts.DataZoomOpts(is_show=True),
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
             )
-                .extend_axis(   # 第二坐标轴
+            .extend_axis(   # 第二坐标轴
                 yaxis=opts.AxisOpts(
                     name="增长率",
                     type_="value",
@@ -595,8 +594,8 @@ class DramFlow:
         uv_day_rate = uv_buy_day_data["growth_rate"].tolist()
         uv_buy_day_line = (
             Line()
-                .add_xaxis(uv_day_x)
-                .add_yaxis("增长率", uv_day_rate, yaxis_index=1, label_opts=opts.LabelOpts(is_show=False))
+            .add_xaxis(uv_day_x)
+            .add_yaxis("增长率", uv_day_rate, yaxis_index=1, label_opts=opts.LabelOpts(is_show=False))
         )
         uv_buy_day_bar.overlap(uv_buy_day_line)
 
@@ -607,14 +606,14 @@ class DramFlow:
         uv_week_y = uv_buy_week_data["month"].tolist()
         uv_buy_week_bar = (
             Bar()
-                .add_xaxis(uv_week_x)
-                .add_yaxis("上月", last_uv_week_y, yaxis_index=0, category_gap="50%", label_opts=opts.LabelOpts(is_show=False))
-                .add_yaxis("本月", uv_week_y, yaxis_index=0, category_gap="50%", label_opts=opts.LabelOpts(is_show=False))
-                .set_global_opts(
+            .add_xaxis(uv_week_x)
+            .add_yaxis("上月", last_uv_week_y, yaxis_index=0, category_gap="50%", label_opts=opts.LabelOpts(is_show=False))
+            .add_yaxis("本月", uv_week_y, yaxis_index=0, category_gap="50%", label_opts=opts.LabelOpts(is_show=False))
+            .set_global_opts(
                 title_opts=opts.TitleOpts("购买人群UV周流量"),
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
             )
-                .extend_axis(   # 第二坐标轴
+            .extend_axis(   # 第二坐标轴
                 yaxis=opts.AxisOpts(
                     name="增长率",
                     type_="value",
@@ -626,8 +625,8 @@ class DramFlow:
         uv_week_rate = uv_buy_week_data["growth_rate"].tolist()
         uv_buy_week_line = (
             Line()
-                .add_xaxis(uv_week_x)
-                .add_yaxis("增长率", uv_week_rate, yaxis_index=1, label_opts=opts.LabelOpts(is_show=False))
+            .add_xaxis(uv_week_x)
+            .add_yaxis("增长率", uv_week_rate, yaxis_index=1, label_opts=opts.LabelOpts(is_show=False))
         )
         uv_buy_week_bar.overlap(uv_buy_week_line)
 
@@ -638,15 +637,15 @@ class DramFlow:
         uv_hour_y = uv_buy_hour_data["month"].tolist()
         uv_buy_hour_bar = (
             Bar()
-                .add_xaxis(uv_hour_x)
-                .add_yaxis("上月", last_uv_hour_y, category_gap="50%", gap="0%", label_opts=opts.LabelOpts(is_show=False))
-                .add_yaxis("本月", uv_hour_y, category_gap="50%", gap="0%", label_opts=opts.LabelOpts(is_show=False))
-                .set_global_opts(
+            .add_xaxis(uv_hour_x)
+            .add_yaxis("上月", last_uv_hour_y, category_gap="50%", gap="0%", label_opts=opts.LabelOpts(is_show=False))
+            .add_yaxis("本月", uv_hour_y, category_gap="50%", gap="0%", label_opts=opts.LabelOpts(is_show=False))
+            .set_global_opts(
                 title_opts=opts.TitleOpts("购买人群UV时流量"),
                 datazoom_opts=opts.DataZoomOpts(is_show=True),
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
             )
-                .extend_axis(   # 第二坐标轴
+            .extend_axis(   # 第二坐标轴
                 yaxis=opts.AxisOpts(
                     name="增长率",
                     type_="value",
@@ -658,8 +657,8 @@ class DramFlow:
         uv_hour_rate = uv_buy_hour_data["growth_rate"].tolist()
         uv_buy_hour_line = (
             Line()
-                .add_xaxis(uv_hour_x)
-                .add_yaxis("增长率", uv_hour_rate, yaxis_index=1, label_opts=opts.LabelOpts(is_show=False))
+            .add_xaxis(uv_hour_x)
+            .add_yaxis("增长率", uv_hour_rate, yaxis_index=1, label_opts=opts.LabelOpts(is_show=False))
         )
         uv_buy_hour_bar.overlap(uv_buy_hour_line)
 
@@ -679,10 +678,10 @@ class DramFlow:
         y_data_day_2 = [round(i / j, 2) for i, j in zip(pv_day_data["last_month"], uv_day_data["last_month"])]
         day_avg_line = (
             Line()
-                .add_xaxis(x_index)
-                .add_yaxis("本月", y_data_day_1, label_opts=opts.LabelOpts(is_show=False))
-                .add_yaxis("上月", y_data_day_2, label_opts=opts.LabelOpts(is_show=False))
-                .set_global_opts(
+            .add_xaxis(x_index)
+            .add_yaxis("本月", y_data_day_1, label_opts=opts.LabelOpts(is_show=False))
+            .add_yaxis("上月", y_data_day_2, label_opts=opts.LabelOpts(is_show=False))
+            .set_global_opts(
                 title_opts=opts.TitleOpts("日人均访问量"),
                 datazoom_opts=opts.DataZoomOpts(is_show=True),
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
@@ -702,10 +701,10 @@ class DramFlow:
         y_data_week_2 = [round(i / j, 2) for i, j in zip(pv_week_data["last_month"], uv_week_data["last_month"])]
         week_avg_line = (
             Line()
-                .add_xaxis(x_index)
-                .add_yaxis("本月", y_data_week_1, label_opts=opts.LabelOpts(is_show=False))
-                .add_yaxis("上月", y_data_week_2, label_opts=opts.LabelOpts(is_show=False))
-                .set_global_opts(
+            .add_xaxis(x_index)
+            .add_yaxis("本月", y_data_week_1, label_opts=opts.LabelOpts(is_show=False))
+            .add_yaxis("上月", y_data_week_2, label_opts=opts.LabelOpts(is_show=False))
+            .set_global_opts(
                 title_opts=opts.TitleOpts("周人均访问量"),
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
                 yaxis_opts=opts.AxisOpts(
@@ -724,10 +723,10 @@ class DramFlow:
         y_data_hour_2 = [round(i / j, 2) for i, j in zip(pv_hour_data["last_month"], uv_hour_data["last_month"])]
         hour_avg_line = (
             Line()
-                .add_xaxis(x_index)
-                .add_yaxis("本月", y_data_hour_1, label_opts=opts.LabelOpts(is_show=False))
-                .add_yaxis("上月", y_data_hour_2, label_opts=opts.LabelOpts(is_show=False))
-                .set_global_opts(
+            .add_xaxis(x_index)
+            .add_yaxis("本月", y_data_hour_1, label_opts=opts.LabelOpts(is_show=False))
+            .add_yaxis("上月", y_data_hour_2, label_opts=opts.LabelOpts(is_show=False))
+            .set_global_opts(
                 title_opts=opts.TitleOpts("时人均访问量"),
                 datazoom_opts=opts.DataZoomOpts(is_show=True),
                 tooltip_opts=opts.TooltipOpts(trigger="axis", axis_pointer_type="cross"),
@@ -748,15 +747,15 @@ class DramFlow:
         day_buy_avg_line, week_buy_avg_line, hour_buy_avg_line = self.draw_avg_buy_chart()
         pv_page = (
             Page()
-                .add(pv_buy_day_bar)
-                .add(uv_buy_day_bar)
-                .add(day_buy_avg_line)
-                .add(pv_buy_week_bar)
-                .add(uv_buy_week_bar)
-                .add(week_buy_avg_line)
-                .add(pv_buy_hour_bar)
-                .add(uv_buy_hour_bar)
-                .add(hour_buy_avg_line)
+            .add(pv_buy_day_bar)
+            .add(uv_buy_day_bar)
+            .add(day_buy_avg_line)
+            .add(pv_buy_week_bar)
+            .add(uv_buy_week_bar)
+            .add(week_buy_avg_line)
+            .add(pv_buy_hour_bar)
+            .add(uv_buy_hour_bar)
+            .add(hour_buy_avg_line)
         )
         pv_page.render(self.save_buy_view_path)
         with open(self.save_buy_view_path, "r+", encoding='utf-8') as html:
@@ -778,90 +777,6 @@ class DramFlow:
             html.close()
 
 
-class UserProfile:
-    def __init__(self, year, month):
-        self.year = year
-        self.month = month
-        self.vip_data_path = "data/vip_user_data.csv"
-        self.month_vip_path = f"data/{self.month}月数据/{self.month}月vip用户数据.csv"
-
-    def read_vip_data(self):
-        sql_vip_user_data = f'select user_id, age, sex, user_reg_tm, user_lv_cd, city_level from jdata_user'
-        get_one_query(sql_vip_user_data, self.vip_data_path)
-
-    def save_month_view_user(self):
-        month_active_data = pd.read_csv(f"data/{self.month}月数据/{self.month}月flow原始数据.csv", encoding='gbk', chunksize=3000000)
-        flow_data = pd.DataFrame()
-        for chunk in month_active_data:
-            chunk["user_id"] = chunk["user_id"].astype(np.int32)
-            chunk[["hour", "week", "day", "type"]] = chunk[["hour", "week", "day", "type"]].astype(np.int8)
-            chunks = chunk.loc[:, ["user_id"]]
-            flow_data = flow_data.append(chunks)
-        flow_data = flow_data.drop_duplicates(subset="user_id", keep="first")
-        # 会员数据
-        vip_user_data = pd.read_csv(self.vip_data_path)
-        vip_user_data = vip_user_data.dropna(how="any")
-        vip_user_data["user_id"] = vip_user_data["user_id"].astype(np.int32)
-        vip_user_data["user_reg_tm"] = pd.to_datetime(vip_user_data["user_reg_tm"])
-        vip_user_data[["age", "sex", "user_lv_cd", "city_level"]] = vip_user_data[["age", "sex", "user_lv_cd", "city_level"]].astype(np.int8)
-        month_user_data = pd.merge(flow_data, vip_user_data, on="user_id", how="left")
-        month_user_data.to_csv(self.vip_data_path)
-
-    def month_view_profile(self):
-        month_user_data = pd.read_csv(self.vip_data_path)
-        regular_users = month_user_data["age"].isnull().sum()
-        vip_users = month_user_data["age"].notnull().sum()
-        print("本月浏览普通用户：{}，会员用户：{}".format(regular_users, vip_users))
-
-    def draw_age_pie(self):
-        month_user_data = pd.read_csv(self.vip_data_path)
-        regular_users = month_user_data["age"].isnull().sum()  # 非会员人数
-        vip_users = month_user_data["age"].notnull().sum()  # 会员人数
-        list1 = [int(regular_users), int(vip_users)]
-        attr1 = ["非会员", "会员"]
-        list2 = [40,160,45,35,80,400,35,60]
-        attr2 = ["阅读", "上课", "运动", "讨论", "编程", "睡觉","听音乐", "玩手机"]
-
-        inner_data_pair = [list(z) for z in zip(attr1, list1)]
-        outer_data_pair = [list(z) for z in zip(attr2, list2)]
-        (
-            Pie(init_opts=opts.InitOpts(theme=ThemeType.LIGHT))
-                .add(
-                series_name="时长占比",
-                data_pair=inner_data_pair,
-                radius=[0, "30%"],
-                label_opts=opts.LabelOpts(position="inner"),
-                )
-                .add(
-                series_name="时长占比",
-                radius=["40%", "55%"],
-                data_pair=outer_data_pair,
-                )
-                .set_global_opts(legend_opts=opts.LegendOpts(pos_left="left", orient="vertical"))
-                .set_series_opts(
-                tooltip_opts=opts.TooltipOpts(
-                    trigger="item", formatter="{a} <br/>{b}: {c} ({d}%)"
-                    )
-                )
-                .render("嵌套饼图.html")
-        )
-
-
-
-"""
-1. 平台全体用户画像
-2. 本月浏览用户画像
-3. 本月购买用户画像
-"""
-
-
-
-
-
-
-
-
-
 def main():
     print("这是程序的入口")
     # month_flow = MonthFlow(2018, 3)
@@ -874,13 +789,6 @@ def main():
     # draw_flow = DramFlow(2018, 3)
     # draw_flow.draw_pv_page()
     # draw_flow.draw_buy_pv_page()
-
-    # 接下来是用户画像数据
-    user_profile = UserProfile(2018, 3)
-    # user_profile.read_vip_data()
-    # user_profile.save_month_view_user()
-    # user_profile.month_view_profile()
-    user_profile.draw_age_pie()
 
 
 if __name__ == '__main__':
