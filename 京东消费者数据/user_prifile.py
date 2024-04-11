@@ -4,7 +4,6 @@
 # @File    : user_prifile.py
 from pyecharts.charts import Line, Bar, Page, Funnel, Pie
 from pyecharts import options as opts
-from bs4 import BeautifulSoup
 from pyecharts.globals import ThemeType
 from tools import *
 import pandas as pd
@@ -52,33 +51,66 @@ class UserProfile:
         regular_users = month_user_data["age"].isnull().sum()  # 非会员人数
         vip_users = month_user_data["age"].notnull().sum()  # 会员人数
 
+        # 对会员性别进行分组
         vip_user_data = month_user_data.dropna()
-        print(vip_user_data)
+        vip_user_sex = vip_user_data.value_counts("sex").sort_index()
         list1 = [int(regular_users), int(vip_users)]
         attr1 = ["非会员", "会员"]
-        list2 = [40,160,45,35,80,400,35,60]
-        attr2 = ["阅读", "上课", "运动", "讨论", "编程", "睡觉","听音乐", "玩手机"]
+        list2 = vip_user_sex.values.tolist()
+        attr2 = ["未知", "女", "男"]
 
         inner_data_pair = [list(z) for z in zip(attr1, list1)]
         outer_data_pair = [list(z) for z in zip(attr2, list2)]
         age_pie = (
-            Pie(init_opts=opts.InitOpts(theme=ThemeType.LIGHT))
+            Pie(init_opts=opts.InitOpts(theme=ThemeType.LIGHT, width="800px", height="600px"))
             .add(
-                series_name="时长占比",
+                series_name="会员占比",
                 data_pair=inner_data_pair,
                 radius=[0, "30%"],
-                label_opts=opts.LabelOpts(position="inner"),
+                label_opts=opts.LabelOpts(
+                    position="inside",
+                    formatter="{b}: {d}%",
+                ),
             )
             .add(
-                series_name="时长占比",
+                series_name="会员性别分布",
                 radius=["40%", "55%"],
                 data_pair=outer_data_pair,
+                label_opts=opts.LabelOpts(
+                    position="outside",
+                    formatter="{a|{a}}{abg|}\n{hr|}\n {b|{b}: }{c}  {per|{d}%}  ",
+                    background_color="#eee",
+                    border_color="#aaa",
+                    border_width=1,
+                    border_radius=4,
+                    rich={
+                        "a": {"color": "#999", "lineHeight": 22, "align": "center"},
+                        "abg": {
+                            "backgroundColor": "#e3e3e3",
+                            "width": "100%",
+                            "align": "right",
+                            "height": 22,
+                            "borderRadius": [4, 4, 0, 0],
+                        },
+                        "hr": {
+                            "borderColor": "#aaa",
+                            "width": "100%",
+                            "borderWidth": 0.5,
+                            "height": 0,
+                        },
+                        "b": {"fontSize": 16, "lineHeight": 33},
+                        "per": {
+                            "color": "#eee",
+                            "backgroundColor": "#334455",
+                            "padding": [2, 4],
+                            "borderRadius": 2,
+                        },
+                    },
+                ),
             )
-            .set_global_opts(legend_opts=opts.LegendOpts(pos_left="left", orient="vertical"))
-            .set_series_opts(
-                tooltip_opts=opts.TooltipOpts(
-                    trigger="item", formatter="{a} <br/>{b}: {c} ({d}%)"
-                )
+            .set_global_opts(
+                legend_opts=opts.LegendOpts(pos_left="left", pos_bottom="center", orient="vertical"),
+                title_opts=opts.TitleOpts(title="本月访问用户会员占比及会员性别分布", pos_top="top", pos_left="center")
             )
         )
         return age_pie
@@ -104,8 +136,8 @@ def main():
     # user_profile.read_vip_data()
     # user_profile.save_month_view_user()
     # user_profile.month_view_profile()
-
-    make_snapshot(driver, user_profile.draw_age_pie().render(), "data/email_file/img_file/bar_chart.png")
+    # user_profile.draw_age_pie()
+    make_snapshot(driver, user_profile.draw_age_pie().render(), "data/email_file/img_file/user_sex_pie_chart.png")
 
 
 if __name__ == '__main__':

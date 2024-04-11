@@ -38,7 +38,8 @@ class AutoMail:
             print(f"{datetime.date.today()}日邮件发送失败", e)
 
     # 添加图片附件
-    def add_img_file(self, img_path, image_id):
+    @staticmethod
+    def add_img_file(img_path, image_id):
         file = open(img_path, "rb")
         img_data = file.read()
         file.close()
@@ -96,8 +97,9 @@ def main():
     # auto_mail.mail_text("薛之谦演唱会抢票时间：2024-04-10 17：17：00", "抢票提醒", ["1678865476@qq.com"])
     # 发送图片邮件
     html_file = open("data/email_file/html_file/日报模板.txt", "r", encoding='utf-8').read()
-    title = "日报"
-    img_path = [["data/email_file/img_file/今日日报.png", 1], ["data/email_file/img_file/bar_chart.png", 2]]
+    date_day = datetime.datetime.today().date()
+    title = f"{date_day}日报"
+    img_path = [["data/email_file/img_file/今日日报.png", 1], ["data/email_file/img_file/user_sex_pie_chart.png", 2]]
     received_mail = ["1678865476@qq.com"]
     auto_mail.send_email_schedule(html_file, title, img_path, received_mail)
 

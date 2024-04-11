@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Awesome-pyecharts</title>
-            <script type="text/javascript" src="https://assets.pyecharts.org/assets/echarts.min.js"></script>
+                <script type="text/javascript" src="https://assets.pyecharts.org/assets/v5/echarts.min.js"></script>
 
 </head>
-<body>
-    <div id="e21b687f354847128448ced6680908df" class="chart-container" style="width:900px; height:500px;"></div>
+<body >
+    <div id="8fe2281ec5e6411093c2495362589f35" class="chart-container" style="width:800px; height:600px; "></div>
     <script>
-        var chart_e21b687f354847128448ced6680908df = echarts.init(
-            document.getElementById('e21b687f354847128448ced6680908df'), 'light', {renderer: 'canvas'});
-        var option_e21b687f354847128448ced6680908df = {
+        var chart_8fe2281ec5e6411093c2495362589f35 = echarts.init(
+            document.getElementById('8fe2281ec5e6411093c2495362589f35'), 'light', {renderer: 'canvas'});
+        var option_8fe2281ec5e6411093c2495362589f35 = {
     "animation": true,
     "animationThreshold": 2000,
     "animationDuration": 1000,
@@ -20,11 +20,36 @@
     "animationDurationUpdate": 300,
     "animationEasingUpdate": "cubicOut",
     "animationDelayUpdate": 0,
+    "aria": {
+        "enabled": false
+    },
     "series": [
         {
             "type": "pie",
-            "name": "\u65f6\u957f\u5360\u6bd4",
+            "name": "\u4f1a\u5458\u5360\u6bd4",
+            "colorBy": "data",
+            "legendHoverLink": true,
+            "selectedMode": false,
+            "selectedOffset": 10,
             "clockwise": true,
+            "startAngle": 90,
+            "minAngle": 0,
+            "minShowLabelAngle": 0,
+            "avoidLabelOverlap": true,
+            "stillShowZeroSum": true,
+            "percentPrecision": 2,
+            "showEmptyCircle": true,
+            "emptyCircleStyle": {
+                "color": "lightgray",
+                "borderColor": "#000",
+                "borderWidth": 0,
+                "borderType": "solid",
+                "borderDashOffset": 0,
+                "borderCap": "butt",
+                "borderJoin": "bevel",
+                "borderMiterLimit": 10,
+                "opacity": 1
+            },
             "data": [
                 {
                     "name": "\u975e\u4f1a\u5458",
@@ -45,70 +70,58 @@
             ],
             "label": {
                 "show": true,
-                "position": "inner",
-                "margin": 8
+                "position": "inside",
+                "margin": 8,
+                "formatter": "{b}: {d}%"
             },
-            "tooltip": {
+            "labelLine": {
                 "show": true,
-                "trigger": "item",
-                "triggerOn": "mousemove|click",
-                "axisPointer": {
-                    "type": "line"
-                },
-                "showContent": true,
-                "alwaysShowContent": false,
-                "showDelay": 0,
-                "hideDelay": 100,
-                "formatter": "{a} <br/>{b}: {c} ({d}%)",
-                "textStyle": {
-                    "fontSize": 14
-                },
-                "borderWidth": 0,
-                "padding": 5
-            },
-            "rippleEffect": {
-                "show": true,
-                "brushType": "stroke",
-                "scale": 2.5,
-                "period": 4
+                "showAbove": false,
+                "length": 15,
+                "length2": 15,
+                "smooth": false,
+                "minTurnAngle": 90,
+                "maxSurfaceAngle": 90
             }
         },
         {
             "type": "pie",
-            "name": "\u65f6\u957f\u5360\u6bd4",
+            "name": "\u4f1a\u5458\u6027\u522b\u5206\u5e03",
+            "colorBy": "data",
+            "legendHoverLink": true,
+            "selectedMode": false,
+            "selectedOffset": 10,
             "clockwise": true,
+            "startAngle": 90,
+            "minAngle": 0,
+            "minShowLabelAngle": 0,
+            "avoidLabelOverlap": true,
+            "stillShowZeroSum": true,
+            "percentPrecision": 2,
+            "showEmptyCircle": true,
+            "emptyCircleStyle": {
+                "color": "lightgray",
+                "borderColor": "#000",
+                "borderWidth": 0,
+                "borderType": "solid",
+                "borderDashOffset": 0,
+                "borderCap": "butt",
+                "borderJoin": "bevel",
+                "borderMiterLimit": 10,
+                "opacity": 1
+            },
             "data": [
                 {
-                    "name": "\u9605\u8bfb",
-                    "value": 40
+                    "name": "\u672a\u77e5",
+                    "value": 3858
                 },
                 {
-                    "name": "\u4e0a\u8bfe",
-                    "value": 160
+                    "name": "\u5973",
+                    "value": 403690
                 },
                 {
-                    "name": "\u8fd0\u52a8",
-                    "value": 45
-                },
-                {
-                    "name": "\u8ba8\u8bba",
-                    "value": 35
-                },
-                {
-                    "name": "\u7f16\u7a0b",
-                    "value": 80
-                },
-                {
-                    "name": "\u7761\u89c9",
-                    "value": 400
-                },
-                {
-                    "name": "\u542c\u97f3\u4e50",
-                    "value": 35
-                },
-                {
-                    "name": "\u73a9\u624b\u673a",
-                    "value": 60
+                    "name": "\u7537",
+                    "value": 321009
                 }
             ],
             "radius": [
@@ -121,32 +134,60 @@
             ],
             "label": {
                 "show": true,
-                "position": "top",
-                "margin": 8
+                "position": "outside",
+                "margin": 8,
+                "formatter": "{a|{a}}{abg|}\n{hr|}\n {b|{b}: }{c}  {per|{d}%}  ",
+                "backgroundColor": "#eee",
+                "borderColor": "#aaa",
+                "borderWidth": 1,
+                "borderRadius": 4,
+                "rich": {
+                    "a": {
+                        "color": "#999",
+                        "lineHeight": 22,
+                        "align": "center"
+                    },
+                    "abg": {
+                        "backgroundColor": "#e3e3e3",
+                        "width": "100%",
+                        "align": "right",
+                        "height": 22,
+                        "borderRadius": [
+                            4,
+                            4,
+                            0,
+                            0
+                        ]
+                    },
+                    "hr": {
+                        "borderColor": "#aaa",
+                        "width": "100%",
+                        "borderWidth": 0.5,
+                        "height": 0
+                    },
+                    "b": {
+                        "fontSize": 16,
+                        "lineHeight": 33
+                    },
+                    "per": {
+                        "color": "#eee",
+                        "backgroundColor": "#334455",
+                        "padding": [
+                            2,
+                            4
+                        ],
+                        "borderRadius": 2
+                    }
+                }
             },
-            "tooltip": {
+            "labelLine": {
                 "show": true,
-                "trigger": "item",
-                "triggerOn": "mousemove|click",
-                "axisPointer": {
-                    "type": "line"
-                },
-                "showContent": true,
-                "alwaysShowContent": false,
-                "showDelay": 0,
-                "hideDelay": 100,
-                "formatter": "{a} <br/>{b}: {c} ({d}%)",
-                "textStyle": {
-                    "fontSize": 14
-                },
-                "borderWidth": 0,
-                "padding": 5
-            },
-            "rippleEffect": {
-                "show": true,
-                "brushType": "stroke",
-                "scale": 2.5,
-                "period": 4
+                "showAbove": false,
+                "length": 15,
+                "length2": 15,
+                "smooth": false,
+                "minTurnAngle": 90,
+                "maxSurfaceAngle": 90
             }
         }
     ],
@@ -155,23 +196,33 @@
             "data": [
                 "\u975e\u4f1a\u5458",
                 "\u4f1a\u5458",
-                "\u9605\u8bfb",
-                "\u4e0a\u8bfe",
-                "\u8fd0\u52a8",
-                "\u8ba8\u8bba",
-                "\u7f16\u7a0b",
-                "\u7761\u89c9",
-                "\u542c\u97f3\u4e50",
-                "\u73a9\u624b\u673a"
+                "\u672a\u77e5",
+                "\u5973",
+                "\u7537"
             ],
             "selected": {},
             "show": true,
             "left": "left",
+            "bottom": "center",
             "orient": "vertical",
             "padding": 5,
             "itemGap": 10,
             "itemWidth": 25,
-            "itemHeight": 14
+            "itemHeight": 14,
+            "backgroundColor": "transparent",
+            "borderColor": "#ccc",
+            "borderRadius": 0,
+            "pageButtonItemGap": 5,
+            "pageButtonPosition": "end",
+            "pageFormatter": "{current}/{total}",
+            "pageIconColor": "#2f4554",
+            "pageIconInactiveColor": "#aaa",
+            "pageIconSize": 15,
+            "animationDurationUpdate": 800,
+            "selector": false,
+            "selectorPosition": "auto",
+            "selectorItemGap": 7,
+            "selectorButtonGap": 10
         }
     ],
     "tooltip": {
@@ -185,20 +236,34 @@
         "alwaysShowContent": false,
         "showDelay": 0,
         "hideDelay": 100,
+        "enterable": false,
+        "confine": false,
+        "appendToBody": false,
+        "transitionDuration": 0.4,
         "textStyle": {
             "fontSize": 14
         },
         "borderWidth": 0,
-        "padding": 5
+        "padding": 5,
+        "order": "seriesAsc"
     },
     "title": [
         {
+            "show": true,
+            "text": "\u672c\u6708\u8bbf\u95ee\u7528\u6237\u4f1a\u5458\u5360\u6bd4\u53ca\u4f1a\u5458\u6027\u522b\u5206\u5e03",
+            "target": "blank",
+            "subtarget": "blank",
+            "left": "center",
+            "top": "top",
             "padding": 5,
-            "itemGap": 10
+            "itemGap": 10,
+            "textAlign": "auto",
+            "textVerticalAlign": "auto",
+            "triggerEvent": false
         }
     ]
 };
-        chart_e21b687f354847128448ced6680908df.setOption(option_e21b687f354847128448ced6680908df);
+        chart_8fe2281ec5e6411093c2495362589f35.setOption(option_8fe2281ec5e6411093c2495362589f35);
     </script>
 </body>
 </html>
