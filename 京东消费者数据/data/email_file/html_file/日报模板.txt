@@ -1,9 +1,25 @@
 <html>
 <body>
     <h1>总览</h1>
-    <img src="cid:image1" alt="image1", width=500px, height=500px>
-    <h1>详细信息</h1>
-    <p>这是详细信息</p>
-    <img src="cid:image2" alt="image2", width=500px, height=500px>
+    <img src="cid:image1" alt="image1", width=800px, height=600px>
+    <h1>本月浏览用户画像</h1>
+        <h2>本月浏览过的会员性别分布饼图</h2>
+            <img src="cid:image2" alt="image2", width=400px, height=300px>
+        <h2>本月浏览过的会员年龄分布饼图</h2>
+            <img src="cid:image3" alt="image3", width=400px, height=300px>
+        <h2>本月浏览过的会员等级分布饼图</h2>
+            <img src="cid:image4" alt="image4", width=400px, height=300px>
+        <h2>本月浏览过的会员城市等级分布饼图</h2>
+            <img src="cid:image5" alt="image5", width=400px, height=300px>
+    <h1>本月购买用户画像</h1>
+        <h2>本月购买过的会员性别分布饼图</h2>
+            <img src="cid:image6" alt="image6", width=400px, height=300px>
+        <h2>本月购买过的会员年龄分布饼图</h2>
+            <img src="cid:image7" alt="image7", width=400px, height=300px>
+        <h2>本月购买过的会员等级分布饼图</h2>
+            <img src="cid:image8" alt="image8", width=400px, height=300px>
+        <h2>本月购买过的会员城市等级分布饼图</h2>
+            <img src="cid:image9" alt="image9", width=400px, height=300px>
+
 <body>
 <html>

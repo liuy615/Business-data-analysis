@@ -60,14 +60,15 @@ class AutoMail:
         file_attachment.add_header('Content-Disposition', 'attachment', filename=file_name)
         return file_attachment
 
+    # 设置定时任务
     @staticmethod
     def timed_tasks(schedule_email):
-        """定时执行：一分钟执行一次"""
-        schedule.every(1).minutes.do(schedule_email)
+        """定时执行：每天8：00执行一次"""
+        schedule.every().day.at('08:00').do(schedule_email)
         # 开始执行任务
         while True:
             schedule.run_pending()  # 运行所有可以运行的任务
-            time.sleep(1)  # 让程序暂停一秒钟
+            time.sleep(60*60)  # 让程序暂停一秒钟
 
     # 设置一个定时任务(1分钟执行一次发送文本类型邮件)
     def send_text_email_schedule(self, text, title, received_mail):
@@ -86,7 +87,9 @@ class AutoMail:
         :return:
         """
         def schedule_email():
-            email = MIMEText(text, 'plain', 'utf-8')
+            email = MIMEMultipart('related')  # 定义邮件的类型，related是超文本加附件的类型
+            content = MIMEText(text, 'html', 'utf-8')
+            email.attach(content)
             email["Subject"] = title
             for path in file_path:
                 email.attach(self.add_file_attachment(path[0], path[1]))
@@ -116,11 +119,30 @@ def main():
     auto_mail = AutoMail()
     # 发送文本邮件
     # auto_mail.send_text_email_schedule("薛之谦演唱会抢票时间：2024-04-10 17：17：00", "抢票提醒", ["1678865476@qq.com"])
-    # 发送图片邮件
+
+    # 发送带附件的文本邮件
+    # file_path = [["data/email_file/img_file/今日日报.png", "今日日报.png"]]
+    # text = "这是一个带有附件的文本邮件测试脚本"
+    # tile = "测试脚本"
+    # received_mail = ["1678865476@qq.com"]
+    # auto_mail.send_attachment_email_schedule(file_path, text, tile, received_mail)
+
+    # 发送图文混合的html类型邮件
+    month = "3月"
     html_file = open("data/email_file/html_file/日报模板.txt", "r", encoding='utf-8').read()
     date_day = datetime.datetime.today().date()
     title = f"{date_day}日报"
-    img_path = [["data/email_file/img_file/今日日报.png", 1], ["data/email_file/img_file/user_sex_pie_chart.png", 2]]
+    img_path = [
+                ["data/email_file/img_file/今日日报.png", 1],
+                [f"data/email_file/img_file/{month}user_sex_pie_chart.png", 2],
+                [f"data/email_file/img_file/{month}user_age_pie_chart.png", 3],
+                [f"data/email_file/img_file/{month}user_lv_pie_chart.png", 4],
+                [f"data/email_file/img_file/{month}user_city_lv_pie_chart.png", 5],
+                [f"data/email_file/img_file/{month}user_buy_sex_pie_chart.png", 6],
+                [f"data/email_file/img_file/{month}user_buy_age_pie_chart.png", 7],
+                [f"data/email_file/img_file/{month}user_buy_lv_pie_chart.png", 8],
+                [f"data/email_file/img_file/{month}user_buy_city_pie_chart.png", 9]
+    ]
     received_mail = ["1678865476@qq.com"]
     auto_mail.send_html_email_schedule(html_file, title, img_path, received_mail)
 
